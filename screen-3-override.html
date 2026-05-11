@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SmartRecruiters · Override capture — Candidate 12</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #fafbfc;
+    --border: #e5e7eb;
+    --border-strong: #d4d7dd;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --ink-4: #94a3b8;
+    --brand: #0e6b6b;
+    --brand-ink: #064e4e;
+    --brand-soft: #e6f3f3;
+    --warn: #b45309;
+    --warn-bg: #fef6e7;
+    --warn-border: #f3d795;
+    --block: #b91c1c;
+    --block-bg: #fdecec;
+    --block-border: #f3b4b4;
+    --ok: #047857;
+    --ok-bg: #e6f4ee;
+    --ok-border: #a7d4be;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04);
+    --shadow-lg: 0 20px 60px rgba(15,23,42,0.18), 0 4px 16px rgba(15,23,42,0.08);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  /* Faded background — hints at Screen 2 beneath */
+  .backdrop {
+    position: fixed; inset: 0;
+    background:
+      linear-gradient(rgba(15,23,42,0.55), rgba(15,23,42,0.65)),
+      var(--surface);
+    backdrop-filter: blur(4px);
+    z-index: 1;
+    display: grid; place-items: center;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .ghost-bg {
+    position: fixed; inset: 0; z-index: 0;
+    background: var(--bg);
+    padding-top: 56px;
+  }
+  .ghost-bg .ghost-row {
+    height: 64px; margin: 8px 24px;
+    background: var(--surface); border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .ghost-bg .ghost-row.small { height: 48px; opacity: 0.7; }
+  .ghost-bg .ghost-topbar { height: 56px; background: #0b2027; position: absolute; top: 0; left: 0; right: 0; }
+
+  /* Modal */
+  .modal {
+    position: relative;
+    width: min(680px, 100%);
+    max-height: calc(100vh - 48px);
+    background: var(--surface);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    animation: modalIn .25s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Header */
+  .mhead {
+    padding: 18px 22px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .action-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: 6px;
+    font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .action-badge.promote { background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok-border); }
+  .action-badge.demote  { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); }
+  .action-badge.dismiss { background: var(--block-bg); color: var(--block); border: 1px solid var(--block-border); }
+
+  .mhead .title-wrap { flex: 1; min-width: 0; }
+  .mhead .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .mhead .sub {
+    margin-top: 4px;
+    font-size: 13px; color: var(--ink-3);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .rank-move {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-variant-numeric: tabular-nums; font-size: 12.5px; font-weight: 500; color: var(--ink-2);
+  }
+  .rank-move .arrow { color: var(--brand); font-weight: 700; }
+  .rank-move .to-top { color: var(--ok); font-weight: 600; }
+
+  .close-btn {
+    background: transparent; border: 0;
+    color: var(--ink-3); font-size: 18px; padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .close-btn:hover { background: var(--surface-2); color: var(--ink); }
+
+  /* Stepper strip */
+  .stepper {
+    display: flex; align-items: center;
+    padding: 12px 22px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--ink-3);
+    gap: 8px;
+  }
+  .stepper .step { display: inline-flex; align-items: center; gap: 6px; }
+  .stepper .num {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--border); color: var(--ink-3);
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .stepper .step.done .num { background: var(--ok); color: #fff; }
+  .stepper .step.active .num { background: var(--brand); color: #fff; }
+  .stepper .step.done .label,
+  .stepper .step.active .label { color: var(--ink); font-weight: 500; }
+  .stepper .arrow { color: var(--ink-4); }
+
+  /* Body */
+  .mbody {
+    padding: 18px 22px 8px;
+    overflow-y: auto; min-height: 0;
+  }
+  .step-block { margin-bottom: 20px; }
+  .step-block.hidden { display: none; }
+  .step-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .step-head .tag {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--ink-3);
+  }
+  .step-head h3 { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
+  .auto-suggest {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-left: auto;
+    padding: 2px 8px; border-radius: 999px;
+    background: var(--brand-soft); color: var(--brand-ink);
+    border: 1px solid #bfe1e1;
+    font-size: 11px; font-weight: 600;
+  }
+  .auto-suggest .spark { font-size: 10px; }
+
+  /* Reason / detail cards */
+  .opts { display: grid; gap: 8px; }
+  .opt {
+    display: grid; grid-template-columns: 22px 1fr; gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color .12s ease, background .12s ease, transform .04s ease;
+    align-items: flex-start;
+  }
+  .opt:hover { border-color: var(--border-strong); background: var(--surface-2); }
+  .opt .radio {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--ink-4);
+    background: var(--surface);
+    margin-top: 1px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .opt.selected {
+    border-color: var(--brand);
+    background: linear-gradient(0deg, rgba(14,107,107,0.04), rgba(14,107,107,0.04)), var(--surface);
+    box-shadow: 0 0 0 2px rgba(14,107,107,0.08);
+  }
+  .opt.selected .radio { border-color: var(--brand); }
+  .opt.selected .radio::after {
+    content: ''; position: absolute; inset: 3px;
+    border-radius: 50%; background: var(--brand);
+  }
+  .opt .body .label {
+    font-weight: 500; font-size: 13.5px; color: var(--ink);
+  }
+  .opt .body .hint {
+    margin-top: 3px; font-size: 12px; color: var(--ink-3); line-height: 1.45;
+  }
+  .opt.suggested {
+    border-color: #bfe1e1;
+    background: linear-gradient(0deg, rgba(14,107,107,0.025), rgba(14,107,107,0.025)), var(--surface);
+  }
+  .opt .suggest-pill {
+    margin-left: 8px;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 1px 7px; border-radius: 999px;
+    background: var(--brand-soft); color: var(--brand-ink);
+    border: 1px solid #bfe1e1;
+    font-size: 10.5px; font-weight: 600;
+    vertical-align: middle;
+  }
+
+  /* Notes */
+  .notes-wrap { margin-top: 4px; }
+  .notes-wrap textarea {
+    width: 100%; min-height: 64px; resize: vertical;
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    padding: 10px 12px; font: inherit; color: var(--ink);
+    background: var(--surface);
+    line-height: 1.5;
+  }
+  .notes-wrap textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(14,107,107,0.12); }
+  .notes-foot {
+    margin-top: 6px;
+    font-size: 11.5px; color: var(--ink-3);
+    display: flex; gap: 8px; align-items: center;
+  }
+  .notes-foot .lock { color: var(--ink-4); }
+
+  /* Footer */
+  .mfoot {
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .pattern {
+    flex: 1; min-width: 0;
+    font-size: 12.5px; color: var(--ink-2);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pattern .ico {
+    width: 26px; height: 26px; border-radius: 7px;
+    background: var(--brand-soft); color: var(--brand);
+    display: grid; place-items: center;
+    font-size: 13px; flex-shrink: 0;
+    border: 1px solid #bfe1e1;
+  }
+  .pattern .text { line-height: 1.4; }
+  .pattern .text strong { color: var(--ink); font-weight: 600; }
+  .pattern.fired .ico { background: #fff3cd; color: #8a5a00; border-color: #f5d57a; }
+
+  .mfoot .right { display: flex; gap: 8px; }
+  .btn {
+    border: 1px solid var(--border-strong); background: var(--surface);
+    color: var(--ink); padding: 8px 14px; border-radius: 8px;
+    font-weight: 500; transition: all .12s ease; box-shadow: var(--shadow-sm); font-size: 13px;
+  }
+  .btn:hover { background: var(--surface-2); }
+  .btn.primary {
+    background: var(--brand); border-color: var(--brand); color: #fff;
+  }
+  .btn.primary:hover { background: var(--brand-ink); border-color: var(--brand-ink); }
+  .btn.primary:disabled {
+    background: #cbd5e1; border-color: #cbd5e1; color: #fff;
+    cursor: not-allowed; box-shadow: none;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #0f172a; color: #fff; padding: 10px 16px; border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); font-size: 13px;
+    opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+    z-index: 100;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+  .toast .check {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--ok); color: #fff; display: grid; place-items: center;
+    font-size: 11px; font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<!-- Ghosted background hint — Screen 2 silhouette -->
+<div class="ghost-bg" aria-hidden="true">
+  <div class="ghost-topbar"></div>
+</div>
+
+<!-- Backdrop with modal -->
+<div class="backdrop" id="backdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+    <!-- Header -->
+    <header class="mhead">
+      <span class="action-badge" id="actionBadge">↑ Promote</span>
+      <div class="title-wrap">
+        <div class="title" id="modalTitle">Promote Candidate 12</div>
+        <div class="sub">
+          <span class="rank-move" id="rankMove">
+            <span>#15</span><span class="arrow">→</span><span class="to-top">top 10</span>
+          </span>
+          <span>· Tier movement captured for audit</span>
+        </div>
+      </div>
+      <button class="close-btn" id="closeBtn" aria-label="Close">✕</button>
+    </header>
+
+    <!-- Stepper -->
+    <div class="stepper" id="stepper">
+      <div class="step active" data-s="1"><span class="num">1</span><span class="label">Reason</span></div>
+      <span class="arrow">›</span>
+      <div class="step" data-s="2"><span class="num">2</span><span class="label">Detail</span></div>
+      <span class="arrow">›</span>
+      <div class="step" data-s="3"><span class="num">3</span><span class="label">Notes (optional)</span></div>
+    </div>
+
+    <!-- Body -->
+    <div class="mbody">
+
+      <!-- Step 1 -->
+      <div class="step-block" id="step1">
+        <div class="step-head">
+          <span class="tag">Step 1 of 3</span>
+          <h3>Why are you promoting this candidate?</h3>
+        </div>
+        <div class="opts" id="reasonOpts"></div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-block hidden" id="step2">
+        <div class="step-head">
+          <span class="tag">Step 2 of 3</span>
+          <h3>Reason detail</h3>
+          <span class="auto-suggest"><span class="spark">✨</span> Auto-suggested from candidate context</span>
+        </div>
+        <div class="opts" id="detailOpts"></div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-block hidden" id="step3">
+        <div class="step-head">
+          <span class="tag">Step 3 of 3</span>
+          <h3>Optional notes</h3>
+        </div>
+        <div class="notes-wrap">
+          <textarea id="notesInput" placeholder="Add any context that helps the audit log. Skippable."></textarea>
+          <div class="notes-foot">
+            <span class="lock">🔒</span>
+            <span>For audit only. Free text is <strong>not</strong> used to train the model.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="mfoot">
+      <div class="pattern" id="patternBlock">
+        <div class="ico">📊</div>
+        <div class="text" id="patternText">
+          <strong>3rd</strong> “Domain depth” override on this role family. After 2 more, the criteria-refinement nudge will surface.
+        </div>
+      </div>
+      <div class="right">
+        <button class="btn" id="cancelBtn">Cancel</button>
+        <button class="btn primary" id="submitBtn" disabled>Submit override</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="check">✓</span><span id="toastMsg">Saved</span></div>
+
+<script>
+  // -------- URL params (sensible demo defaults) --------
+  const params = new URLSearchParams(window.location.search);
+  const candidateId = params.get('candidate') || '12';
+  const action      = params.get('action')    || 'promote';   // promote | demote | dismiss
+  const fromRank    = params.get('from')      || '15';
+  const toRank      = params.get('to')        || 'top 10';
+
+  // -------- Action variants --------
+  const ACTION_COPY = {
+    promote: { label: '↑ Promote', verb: 'Promote', sub: `top 10`,    cls: 'promote' },
+    demote:  { label: '↓ Demote',  verb: 'Demote',  sub: `#${toRank}`, cls: 'demote'  },
+    dismiss: { label: '✕ Dismiss', verb: 'Dismiss', sub: 'removed',    cls: 'dismiss' },
+  };
+  const cfg = ACTION_COPY[action] || ACTION_COPY.promote;
+
+  // Header
+  document.getElementById('actionBadge').textContent = cfg.label;
+  document.getElementById('actionBadge').className = `action-badge ${cfg.cls}`;
+  document.getElementById('modalTitle').textContent = `${cfg.verb} Candidate ${candidateId}`;
+  document.getElementById('rankMove').innerHTML =
+    `<span>#${fromRank}</span><span class="arrow">→</span><span class="${action === 'promote' ? 'to-top' : ''}">${cfg.sub}</span>`;
+  document.getElementById('submitBtn').textContent = `Submit ${cfg.verb.toLowerCase()}`;
+
+  // -------- Reason taxonomy (Step 1 → Step 2 mapping) --------
+  // The suggested option per reason is the one expected to be auto-selected.
+  const REASONS = {
+    domain: {
+      label: 'Domain depth not captured in resume scoring',
+      hint:  'Resume signals miss domain-adjacent experience that you can verify.',
+      details: [
+        { id: 'd-adj',  label: 'Employer is non-financial but role was payments-adjacent', suggested: true },
+        { id: 'd-proj', label: 'Payments-adjacent experience evidenced via specific project' },
+        { id: 'd-own',  label: 'Direct payments product ownership' },
+      ],
+      patternKey: 'Domain depth',
+    },
+    metrics: {
+      label: 'Quantified outcomes underweighted by model',
+      hint:  'Impact is measurable but expressed in a format the model under-counts.',
+      details: [
+        { id: 'm-fmt',  label: 'Metrics present but in non-standard format', suggested: true },
+        { id: 'm-qual', label: 'Impact expressed qualitatively with strong specificity' },
+        { id: 'm-recent', label: 'Recent role has wins not captured by keyword extraction' },
+      ],
+      patternKey: 'Quantified outcomes',
+    },
+    musthave: {
+      label: 'HM-specific must-have evidenced (off-resume context)',
+      hint:  'You have verified a must-have through context the model can\'t see.',
+      details: [
+        { id: 'h-cover', label: 'Skill mentioned in cover letter or referral, not resume', suggested: true },
+        { id: 'h-link',  label: 'Verified via LinkedIn or external portfolio' },
+        { id: 'h-portfolio', label: 'Implied by project portfolio link' },
+      ],
+      patternKey: 'HM-specific must-have',
+    },
+    senior: {
+      label: 'Senior-level pattern not visible to keyword extraction',
+      hint:  'Leadership or architectural depth that titles and keywords don\'t reveal.',
+      details: [
+        { id: 's-xfn',  label: 'Cross-functional leadership not titled', suggested: true },
+        { id: 's-arch', label: 'Architectural decision-making evidenced in projects' },
+        { id: 's-mentor', label: 'Mentorship and team-building under-keyworded' },
+      ],
+      patternKey: 'Senior-level pattern',
+    },
+    other: {
+      label: 'Other (specify in notes)',
+      hint:  'Not covered by the categories above — capture rationale in Step 3 notes.',
+      details: null,
+      patternKey: 'Other',
+    },
+  };
+
+  // -------- Patterns (mock — would come from the audit log) --------
+  // existingCount per reason — for the spec demo, "Domain depth" is at 2 prior, so this is the 3rd.
+  const PRIOR_COUNTS = { domain: 2, metrics: 0, musthave: 1, senior: 0, other: 0 };
+
+  // -------- Demo defaults (per spec): pre-select reason if promoting Candidate 12 --------
+  let selectedReason = null;
+  let selectedDetail = null;
+
+  // -------- Render Step 1 --------
+  const reasonOpts = document.getElementById('reasonOpts');
+  Object.entries(REASONS).forEach(([key, r]) => {
+    const card = document.createElement('div');
+    card.className = 'opt';
+    card.dataset.key = key;
+    card.innerHTML = `
+      <div class="radio"></div>
+      <div class="body">
+        <div class="label">${r.label}</div>
+        <div class="hint">${r.hint}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => selectReason(key));
+    reasonOpts.appendChild(card);
+  });
+
+  // -------- Render Step 2 (called when Step 1 selected) --------
+  function renderDetails(reasonKey) {
+    const detailOpts = document.getElementById('detailOpts');
+    detailOpts.innerHTML = '';
+    const r = REASONS[reasonKey];
+    if (!r.details) {
+      detailOpts.innerHTML = `
+        <div style="padding: 14px; background: var(--surface-2); border: 1px dashed var(--border); border-radius: 8px; color: var(--ink-3); font-size: 13px;">
+          No sub-categories for this reason. Continue to Step 3 to capture details in notes.
+        </div>
+      `;
+      // Auto-advance past Step 2
+      selectedDetail = 'other-freetext';
+      enableStep(3);
+      updateSubmit();
+      return;
+    }
+    r.details.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'opt' + (d.suggested ? ' suggested' : '');
+      card.dataset.id = d.id;
+      const pill = d.suggested ? '<span class="suggest-pill">✨ Suggested</span>' : '';
+      card.innerHTML = `
+        <div class="radio"></div>
+        <div class="body">
+          <div class="label">${d.label}${pill}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => selectDetail(d.id));
+      detailOpts.appendChild(card);
+    });
+
+    // Auto-select the suggested detail
+    const suggested = r.details.find(d => d.suggested);
+    if (suggested) selectDetail(suggested.id, { silent: true });
+  }
+
+  // -------- Selection handlers --------
+  function selectReason(key) {
+    selectedReason = key;
+    selectedDetail = null;
+    document.querySelectorAll('#reasonOpts .opt').forEach(c => {
+      c.classList.toggle('selected', c.dataset.key === key);
+    });
+    enableStep(2);
+    renderDetails(key);
+    updatePattern();
+    updateSubmit();
+  }
+
+  function selectDetail(id, opts = {}) {
+    selectedDetail = id;
+    document.querySelectorAll('#detailOpts .opt').forEach(c => {
+      c.classList.toggle('selected', c.dataset.id === id);
+    });
+    enableStep(3);
+    updateSubmit();
+  }
+
+  function enableStep(n) {
+    document.querySelectorAll('.step-block').forEach((b, i) => {
+      const num = i + 1;
+      if (num <= n) b.classList.remove('hidden');
+    });
+    // Stepper visual state
+    document.querySelectorAll('#stepper .step').forEach(el => {
+      const s = parseInt(el.dataset.s, 10);
+      el.classList.remove('active', 'done');
+      if (s < n)  el.classList.add('done');
+      if (s === n) el.classList.add('active');
+    });
+  }
+
+  function updatePattern() {
+    const block = document.getElementById('patternBlock');
+    const text  = document.getElementById('patternText');
+    if (!selectedReason) return;
+    const r = REASONS[selectedReason];
+    const prior = PRIOR_COUNTS[selectedReason] || 0;
+    const thisCount = prior + 1; // including this one
+    const remaining = Math.max(0, 5 - thisCount);
+    const ordinal = ['', '1st', '2nd', '3rd', '4th', '5th'][thisCount] || `${thisCount}th`;
+    if (thisCount >= 5) {
+      block.classList.add('fired');
+      text.innerHTML = `<strong>5th</strong> “${r.patternKey}” override — criteria-refinement nudge will fire after submit.`;
+    } else {
+      block.classList.remove('fired');
+      const tail = remaining === 1
+        ? 'After 1 more, the criteria-refinement nudge will surface.'
+        : `After ${remaining} more, the criteria-refinement nudge will surface.`;
+      text.innerHTML = `<strong>${ordinal}</strong> “${r.patternKey}” override on this role family. ${tail}`;
+    }
+  }
+
+  function updateSubmit() {
+    const ok = selectedReason && selectedDetail;
+    document.getElementById('submitBtn').disabled = !ok;
+  }
+
+  // -------- Demo pre-fill: per spec, Candidate 12 + promote → preselect Domain depth + suggested detail + notes --------
+  function applyDemoDefaults() {
+    if (action === 'promote' && candidateId === '12') {
+      selectReason('domain');                       // Step 1 auto-selected
+      // Step 2 suggested is auto-selected inside selectReason
+      document.getElementById('notesInput').value =
+        'Built fraud detection at Square — payments-adjacent ML, model didn\'t recognize';
+    }
+  }
+  applyDemoDefaults();
+
+  // -------- Submit / Cancel / Close --------
+  function returnToScreen2() { window.location.href = 'screen-2-ranked.html'; }
+  document.getElementById('cancelBtn').addEventListener('click', returnToScreen2);
+  document.getElementById('closeBtn').addEventListener('click', returnToScreen2);
+  document.getElementById('backdrop').addEventListener('click', e => {
+    if (e.target === e.currentTarget) returnToScreen2();
+  });
+
+  // -------- Shared state (localStorage) --------
+  const STORAGE_KEY = 'srOverrides';
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { overrides: [], dismissed: [] }; }
+    catch { return { overrides: [], dismissed: [] }; }
+  }
+  function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    const btn = document.getElementById('submitBtn');
+    if (btn.disabled) return;
+    btn.disabled = true; btn.textContent = 'Submitting…';
+
+    // Persist override
+    const s = loadState();
+    const detailObj = (REASONS[selectedReason]?.details || []).find(d => d.id === selectedDetail);
+    s.overrides.push({
+      candidate: parseInt(candidateId, 10),
+      action,
+      from: fromRank,
+      to: toRank,
+      reason: selectedReason,
+      reasonLabel: REASONS[selectedReason]?.label,
+      reasonKey: REASONS[selectedReason]?.patternKey,
+      detail: selectedDetail,
+      detailLabel: detailObj?.label || (selectedDetail === 'other-freetext' ? 'See notes' : ''),
+      notes: document.getElementById('notesInput').value.trim(),
+      ts: Date.now(),
+    });
+    if (action === 'dismiss') s.dismissed.push(parseInt(candidateId, 10));
+    saveState(s);
+
+    // Toast
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent =
+      `${cfg.verb} captured · Candidate ${candidateId} · audit log updated`;
+    t.classList.add('show');
+
+    setTimeout(returnToScreen2, 1100);
+  });
+
+  // -------- Keyboard --------
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') returnToScreen2();
+    if (e.key === 'Enter' && !e.shiftKey && !document.getElementById('submitBtn').disabled
+        && document.activeElement.tagName !== 'TEXTAREA') {
+      document.getElementById('submitBtn').click();
+    }
+  });
+</script>
+</body>
+</html>

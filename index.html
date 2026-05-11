@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hiring Workflow Prototype</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #fafbfc;
+    --border: #e5e7eb;
+    --border-strong: #d4d7dd;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --ink-4: #94a3b8;
+    --brand: #0e6b6b;
+    --brand-ink: #064e4e;
+    --brand-soft: #e6f3f3;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink); background: var(--bg); font-size: 15px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 56px 24px 80px; }
+
+  header { margin-bottom: 36px; }
+  .logo {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--brand-ink); font-weight: 700; letter-spacing: -0.01em; font-size: 14px;
+    margin-bottom: 18px;
+  }
+  .logo-mark {
+    width: 26px; height: 26px; border-radius: 6px;
+    background: linear-gradient(135deg, #14b8a6, #0e6b6b);
+    display: grid; place-items: center; color: white; font-size: 13px; font-weight: 800;
+  }
+  h1 {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 14px; line-height: 1.15;
+  }
+  .lede { color: var(--ink-2); font-size: 16px; max-width: 720px; line-height: 1.6; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .section-label {
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 11px; font-weight: 700; color: var(--ink-3);
+    margin: 36px 0 12px;
+  }
+
+  .cards { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .card {
+    display: grid; grid-template-columns: 56px 1fr auto; gap: 18px;
+    align-items: center;
+    padding: 20px 22px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; box-shadow: var(--shadow-sm);
+    text-decoration: none; color: inherit;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .04s ease;
+  }
+  .card:hover { border-color: var(--border-strong); box-shadow: var(--shadow); }
+  .card:active { transform: translateY(0.5px); }
+  .card .num {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--brand-soft); color: var(--brand-ink);
+    border: 1px solid #bfe1e1;
+    display: grid; place-items: center; font-weight: 700; font-size: 17px;
+    font-variant-numeric: tabular-nums;
+  }
+  .card.hero .num { background: var(--brand); color: white; border-color: var(--brand); }
+  .card .body .name { font-weight: 600; font-size: 16px; letter-spacing: -0.005em; }
+  .card .body .desc { color: var(--ink-3); font-size: 13.5px; margin-top: 3px; line-height: 1.5; }
+  .card .arrow {
+    color: var(--ink-4); font-size: 18px; transition: transform .15s ease, color .15s ease;
+  }
+  .card:hover .arrow { color: var(--brand); transform: translateX(3px); }
+  .pill {
+    display: inline-block; margin-left: 8px;
+    padding: 2px 8px; border-radius: 999px;
+    background: var(--brand-soft); color: var(--brand-ink);
+    border: 1px solid #bfe1e1;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    vertical-align: middle;
+  }
+  .pill.soft { background: #eef2f7; color: var(--ink-3); border-color: var(--border); text-transform: none; letter-spacing: 0; font-weight: 500; }
+
+  .flow {
+    margin-top: 28px; padding: 18px 22px;
+    background: var(--surface); border: 1px dashed var(--border-strong);
+    border-radius: 12px; color: var(--ink-2); font-size: 13.5px; line-height: 1.65;
+  }
+  .flow strong { color: var(--ink); font-weight: 600; }
+  .flow code {
+    background: #eef2f7; padding: 1px 6px; border-radius: 4px;
+    font-size: 12.5px; font-family: ui-monospace, monospace;
+  }
+
+  footer {
+    margin-top: 48px; padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--ink-4); font-size: 12.5px;
+  }
+  footer a { color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo"><div class="logo-mark">HR</div><span>HireRight prototype</span></div>
+    <h1>An AI-augmented hiring workflow — built with bias control upstream, not bolted on.</h1>
+    <p class="lede">
+      A working prototype for a recruiter triaging 150 applicants on a senior-engineering role.
+      Three screens demonstrate the thesis: <strong>define what "good" looks like before the model produces a shortlist</strong>,
+      <strong>show confidence bands honestly inside the commitment</strong>, and
+      <strong>capture override reasoning as first-class data</strong>.
+    </p>
+  </header>
+
+  <div class="section-label">Walkthrough</div>
+  <div class="cards">
+
+    <a class="card" href="screen-1-criteria.html">
+      <div class="num">1</div>
+      <div class="body">
+        <div class="name">Criteria Builder + Proxy Stress Test</div>
+        <div class="desc">Define must-haves, weighted preferences, and signal tuning. The system runs a pre-flight bias check on the criteria themselves — a three-tier action system (soft flag · soft block · hard block).</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+
+    <a class="card" href="screen-2-ranked.html">
+      <div class="num">2</div>
+      <div class="body">
+        <div class="name">Ranked Candidate View + Confidence Bands <span class="pill soft">Start the demo flow here</span></div>
+        <div class="desc">The recruiter's working surface. 150 candidates grouped into Tier A (high confidence), Tier B (statistically indistinguishable), and Tier C (mixed signals). All candidates remain visible — no auto-rejection.</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+
+    <a class="card hero" href="screen-3-override.html">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="name">Structured Override Capture <span class="pill">Hero</span></div>
+        <div class="desc">When the recruiter promotes, demotes, or dismisses a candidate, capture <em>why</em> as structured data — not free text. Reason category → auto-suggested detail → optional notes. Pattern detection runs quietly in the background.</div>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+
+  </div>
+
+  <div class="flow">
+    <strong>Demo flow (~90 seconds):</strong>
+    Open <code>Screen 2</code> → Promote <strong>Candidate 12</strong> → modal opens with the spec-pre-filled override
+    → Submit → return to Screen 2 and watch Candidate 12 land in Tier A with an audit-tagged badge.
+    Repeat with another candidate to see the pattern detector advance toward the criteria-refinement nudge.
+    Hit <code>↻ Reset demo</code> in the top right to start clean.
+  </div>
+
+  <footer>
+    Built as a prototype demonstration · <a href="https://github.com/paintedgray/hireright-prototype">View source</a>
+  </footer>
+
+</div>
+</body>
+</html>

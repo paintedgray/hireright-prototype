@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SmartRecruiters · Ranked Candidates — Senior Backend Engineer, Payments Platform</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #fafbfc;
+    --border: #e5e7eb;
+    --border-strong: #d4d7dd;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --ink-4: #94a3b8;
+    --brand: #0e6b6b;
+    --brand-ink: #064e4e;
+    --brand-soft: #e6f3f3;
+    --accent: #1e40af;
+    --warn: #b45309;
+    --warn-bg: #fef6e7;
+    --warn-border: #f3d795;
+    --block: #b91c1c;
+    --block-bg: #fdecec;
+    --block-border: #f3b4b4;
+    --ok: #047857;
+    --ok-bg: #e6f4ee;
+    --ok-border: #a7d4be;
+    --tierA: #0e6b6b;
+    --tierA-bg: #e6f3f3;
+    --tierB: #475569;
+    --tierB-bg: #eef2f7;
+    --tierC: #b45309;
+    --tierC-bg: #fef6e7;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  /* App chrome */
+  .app { display: grid; grid-template-rows: 56px auto 1fr; min-height: 100vh; }
+  .topnav {
+    background: #0b2027; color: #cbd5e1;
+    display: flex; align-items: center; padding: 0 20px; gap: 24px;
+    border-bottom: 1px solid #0a1a20;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; color: #fff; font-weight: 700; letter-spacing: -0.01em; }
+  .logo-mark {
+    width: 22px; height: 22px; border-radius: 5px;
+    background: linear-gradient(135deg, #14b8a6, #0e6b6b);
+    display: grid; place-items: center; color: white; font-size: 12px; font-weight: 800;
+  }
+  .topnav .crumbs { color: #94a3b8; display: flex; gap: 8px; align-items: center; font-size: 13px; }
+  .topnav .crumbs a { color: #cbd5e1; text-decoration: none; }
+  .topnav .crumbs .sep { color: #475569; }
+  .topnav .crumbs .here { color: #fff; font-weight: 500; }
+  .topnav .spacer { flex: 1; }
+  .topnav .user { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#94a3b8,#475569); display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 12px;}
+
+  /* Page header (sticky, two rows: title + toolbar) */
+  .pageheader {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px 0;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .header-top { display: flex; align-items: center; gap: 14px; padding-bottom: 10px; }
+  .header-top .title-line { display: inline-flex; align-items: center; gap: 10px; }
+  .header-top .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .header-top .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500;
+    background: #eef2f7; color: var(--ink-2); border: 1px solid var(--border);
+  }
+  .chip.role { background: var(--brand-soft); color: var(--brand-ink); border-color: #bfe1e1; }
+  .chip.active { background: var(--ok-bg); color: var(--ok); border-color: var(--ok-border); }
+  .btn {
+    border: 1px solid var(--border-strong); background: var(--surface);
+    color: var(--ink); padding: 7px 12px; border-radius: 8px;
+    font-weight: 500; transition: all .12s ease; box-shadow: var(--shadow-sm); font-size: 13px;
+  }
+  .btn:hover { background: var(--surface-2); }
+  .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .btn.primary:hover { background: var(--brand-ink); border-color: var(--brand-ink); }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--ink-2); box-shadow: none; }
+  .btn.ghost:hover { background: #eef2f7; }
+
+  /* Toolbar */
+  .toolbar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .filter-pills { display: inline-flex; gap: 4px; background: #eef2f7; padding: 3px; border-radius: 8px; }
+  .filter-pills button {
+    border: 0; background: transparent; padding: 6px 12px;
+    font-size: 12.5px; font-weight: 500; color: var(--ink-3); border-radius: 6px;
+  }
+  .filter-pills button.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+  .filter-pills button .num { color: var(--ink-4); font-weight: 500; margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .filter-pills button.active .num { color: var(--ink-3); }
+  .toolbar .search {
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: var(--surface); padding: 6px 10px; display: flex; align-items: center; gap: 6px;
+    width: 220px;
+  }
+  .toolbar .search input { border: 0; outline: 0; flex: 1; font: inherit; color: var(--ink); background: transparent; min-width: 0; }
+  .toolbar .search .ico { color: var(--ink-4); font-size: 13px; }
+  .toolbar .search .search-clear {
+    color: var(--ink-4); font-size: 11px; cursor: pointer;
+    padding: 2px 6px; border-radius: 4px;
+    display: none;
+  }
+  .toolbar .search.has-text .search-clear { display: inline-flex; }
+  .toolbar .search .search-clear:hover { background: #eef2f7; color: var(--ink-2); }
+
+  /* No matches state */
+  .no-matches {
+    padding: 32px 14px; text-align: center;
+    color: var(--ink-3); font-size: 13px;
+    background: var(--surface); border: 1px dashed var(--border-strong);
+    border-radius: var(--radius); margin: 8px 0;
+  }
+  .no-matches strong { color: var(--ink-2); font-weight: 600; }
+  .no-matches .hint { margin-top: 6px; font-size: 12px; color: var(--ink-4); }
+
+  /* Highlighted match text */
+  mark { background: #fff3cd; color: var(--ink); padding: 0 1px; border-radius: 2px; }
+
+  /* Dismissed list view */
+  .dismissed-section { margin-top: 4px; }
+  .dismissed-empty {
+    padding: 32px 14px; text-align: center;
+    color: var(--ink-3); font-size: 13px;
+    background: var(--surface); border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+  }
+  .dismissed-empty .hint { margin-top: 6px; font-size: 12px; color: var(--ink-4); }
+  .dismissed-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--block);
+    border-radius: var(--radius);
+    padding: 12px 14px; margin-bottom: 8px;
+    display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .dismissed-card .body .name { font-weight: 600; font-size: 14px; }
+  .dismissed-card .body .quote { color: var(--ink-3); font-size: 12.5px; margin-top: 2px; }
+  .dismissed-card .body .meta {
+    color: var(--ink-3); font-size: 12px; margin-top: 6px;
+    display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+  .dismissed-card .body .reason {
+    color: var(--block); font-weight: 500;
+    background: var(--block-bg); border: 1px solid var(--block-border);
+    padding: 1px 8px; border-radius: 999px; font-size: 11px;
+  }
+  .dismissed-card .restore {
+    border: 1px solid var(--border-strong); background: var(--surface);
+    color: var(--ink); padding: 6px 12px; border-radius: 6px; font-size: 12.5px;
+    cursor: pointer; font-weight: 500;
+  }
+  .dismissed-card .restore:hover { background: var(--ok-bg); border-color: var(--ok-border); color: var(--ok); }
+  .toolbar select {
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: var(--surface); padding: 6px 28px 6px 10px;
+    font: inherit; color: var(--ink); appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path fill='%2364748b' d='M5 7L1 3h8z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+  }
+  .toolbar .right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .toolbar .view-criteria { font-size: 13px; color: var(--brand); text-decoration: none; font-weight: 500; }
+  .toolbar .view-criteria:hover { text-decoration: underline; }
+
+  /* Main grid */
+  .main { display: block; }
+  .pane-list {
+    padding: 20px 24px 80px; min-width: 0;
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  /* Tier groups */
+  .tier { margin-bottom: 14px; }
+  .tier-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px; padding: 0 4px;
+  }
+  .tier-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .tier-dot.A { background: var(--tierA); }
+  .tier-dot.B { background: var(--tierB); }
+  .tier-dot.C { background: var(--tierC); }
+  .tier-name { font-weight: 600; font-size: 13px; letter-spacing: -0.005em; }
+  .tier-name.A { color: var(--tierA); }
+  .tier-name.B { color: var(--tierB); }
+  .tier-name.C { color: var(--tierC); }
+  .tier-sub { font-size: 12.5px; color: var(--ink-3); }
+  .tier-info {
+    color: var(--ink-4); font-size: 12px; cursor: help;
+    display: inline-flex; width: 14px; height: 14px;
+    border: 1px solid var(--ink-4); border-radius: 50%;
+    align-items: center; justify-content: center;
+    font-style: italic; font-family: Georgia, serif;
+  }
+  .tier-info:hover { color: var(--ink-2); border-color: var(--ink-2); }
+  .tier-count {
+    margin-left: auto;
+    font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums;
+  }
+
+  /* Candidate row */
+  .cand {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px 14px;
+    display: grid; grid-template-columns: 32px 1fr auto; gap: 12px; align-items: center;
+    margin-bottom: 6px; box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: border-color .12s ease, box-shadow .12s ease, transform .04s ease;
+  }
+  .cand:hover { border-color: var(--border-strong); box-shadow: var(--shadow); }
+  .cand:active { transform: translateY(0.5px); }
+  .cand .rank {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: grid; place-items: center;
+    font-weight: 600; font-size: 12px; color: var(--ink-2);
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  .cand.A .rank { background: var(--tierA-bg); border-color: #bfe1e1; color: var(--tierA); }
+  .cand.B .rank { background: var(--tierB-bg); border-color: var(--border); color: var(--tierB); }
+  .cand.C .rank { background: var(--tierC-bg); border-color: var(--warn-border); color: var(--tierC); }
+
+  .cand .body .name { font-weight: 600; font-size: 14px; }
+  .cand .body .quote {
+    color: var(--ink-2); font-size: 13px; margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 580px;
+  }
+  .cand .body .meta {
+    color: var(--ink-3); font-size: 12px; margin-top: 4px;
+    display: inline-flex; gap: 8px; align-items: center;
+  }
+  .cand .body .meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-4); display: inline-block; }
+  .cand .body .meta .reviewed {
+    color: var(--ok); font-weight: 600;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .override-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+    margin-left: 6px; vertical-align: middle;
+  }
+  .override-badge.promote { background: var(--ok-bg); color: var(--ok); border: 1px solid var(--ok-border); }
+  .override-badge.demote  { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); }
+  .reset-link {
+    font-size: 11.5px; color: var(--ink-3); text-decoration: none;
+    padding: 4px 8px; border-radius: 6px;
+  }
+  .reset-link:hover { background: var(--surface-2); color: var(--ink-2); }
+
+  .cand .actions {
+    display: inline-flex; gap: 4px; align-items: center;
+  }
+  .cand .actions button {
+    border: 1px solid transparent; background: transparent;
+    color: var(--ink-3); padding: 5px 9px; border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+  }
+  .cand .actions button:hover { background: var(--surface-2); border-color: var(--border); color: var(--ink); }
+  .cand .actions .promote:hover { background: var(--ok-bg); border-color: var(--ok-border); color: var(--ok); }
+  .cand .actions .demote:hover  { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn); }
+  .cand .actions .dismiss:hover { background: var(--block-bg); border-color: var(--block-border); color: var(--block); }
+  .cand .actions .view {
+    margin-left: 4px; padding: 5px 10px; color: var(--brand);
+    border-color: #bfe1e1; background: var(--brand-soft);
+  }
+  .cand .actions .view:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+  /* Shortlist commit line */
+  .commit-line {
+    margin: 22px 0 14px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .commit-line .rule {
+    flex: 1; height: 1px; border-top: 2px dashed var(--brand);
+    opacity: 0.55;
+  }
+  .commit-line .label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--brand); text-transform: uppercase;
+    background: var(--brand-soft); padding: 4px 10px; border-radius: 999px;
+    border: 1px solid #bfe1e1;
+  }
+  .commit-line .help {
+    font-size: 12px; color: var(--ink-3); font-style: italic;
+  }
+
+  /* Below-the-line: compact rows */
+  .below-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px; padding: 0 4px; color: var(--ink-3);
+    font-size: 12.5px;
+  }
+  .below-list .cand-compact {
+    display: grid; grid-template-columns: 28px 1fr auto;
+    gap: 10px; align-items: center;
+    padding: 8px 14px; background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px; cursor: pointer;
+    color: var(--ink-3);
+  }
+  .below-list .cand-compact:hover { background: var(--surface); border-color: var(--border); color: var(--ink-2); }
+  .below-list .cand-compact .rank {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: grid; place-items: center; font-size: 11px;
+    background: transparent; border: 1px solid var(--border); color: var(--ink-4);
+    font-variant-numeric: tabular-nums;
+  }
+  .below-list .cand-compact .body { font-size: 13px; }
+  .below-list .cand-compact .body .quote {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 520px;
+    color: var(--ink-3); font-size: 12.5px; margin-top: 1px;
+  }
+  .below-list .cand-compact .actions button {
+    border: 1px solid transparent; background: transparent;
+    color: var(--ink-4); padding: 3px 8px; border-radius: 5px;
+    font-size: 11.5px;
+  }
+  .below-list .cand-compact .actions button:hover { background: var(--surface-2); color: var(--ink-2); border-color: var(--border); }
+  .below-more {
+    display: flex; justify-content: center; padding: 10px 0;
+  }
+
+  /* Right sidebar */
+  .side-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 14px; box-shadow: var(--shadow-sm);
+  }
+  .side-card .head {
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .side-card .head h3 { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: -0.005em; }
+  .side-card .head .right {
+    margin-left: auto; font-size: 11.5px; color: var(--ink-3);
+    text-decoration: none;
+  }
+  .side-card .head .right:hover { color: var(--brand); }
+  .side-card .body { padding: 12px 14px; font-size: 12.5px; color: var(--ink-2); }
+
+  .crit-summary { margin: 0; padding: 0; list-style: none; }
+  .crit-summary li {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    font-size: 12.5px; line-height: 1.4;
+  }
+  .crit-summary li:last-child { border-bottom: none; padding-bottom: 0; }
+  .crit-summary .ico {
+    color: var(--brand); font-weight: 700; flex-shrink: 0;
+  }
+  .crit-summary .label-pref {
+    color: var(--ink-3); font-size: 11px; margin-left: 4px;
+  }
+  .crit-summary-divider {
+    text-transform: uppercase; letter-spacing: 0.06em;
+    font-size: 10.5px; color: var(--ink-4); font-weight: 600;
+    margin: 8px 0 4px;
+  }
+
+  .pattern-quiet {
+    color: var(--ink-3); font-size: 12px; line-height: 1.5;
+    padding: 4px 0;
+  }
+  .pattern-quiet .meter {
+    margin-top: 8px; height: 6px; background: #eef2f7; border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .pattern-quiet .meter .fill {
+    height: 100%; background: var(--brand); width: 0%;
+    transition: width .3s ease;
+  }
+  .pattern-quiet .meter .ticks {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(to right, transparent calc(100%/5 - 1px), rgba(255,255,255,0.6) calc(100%/5));
+    background-size: calc(100%/5) 100%;
+  }
+  .pattern-quiet .ticklabels {
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: var(--ink-4); margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-row {
+    display: flex; gap: 8px; align-items: baseline;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    font-size: 12.5px;
+  }
+  .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .stat-row .num { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; min-width: 28px; }
+  .stat-row .lbl { color: var(--ink-3); }
+
+  /* Tooltip */
+  [data-tooltip] { position: relative; }
+  [data-tooltip]:hover::after {
+    content: attr(data-tooltip); position: absolute;
+    top: 100%; left: 0; margin-top: 6px;
+    background: #0f172a; color: #fff; font-size: 12px;
+    padding: 8px 12px; border-radius: 6px; white-space: normal;
+    z-index: 50; max-width: 320px; line-height: 1.45;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #0f172a; color: #fff; padding: 10px 16px; border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); font-size: 13px;
+    opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+  /* Anonymized name styling */
+  .name .anon { color: var(--ink-3); font-weight: 500; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Top nav -->
+  <header class="topnav">
+    <div class="logo">
+      <div class="logo-mark">SR</div>
+      <span>SmartRecruiters</span>
+    </div>
+    <div class="crumbs">
+      <a href="#">Jobs</a><span class="sep">/</span>
+      <a href="screen-1-criteria.html">Senior Backend Engineer — Payments Platform</a><span class="sep">/</span>
+      <span class="here">Candidates</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="user">
+      <span>Sara Park</span>
+      <div class="avatar">SP</div>
+    </div>
+  </header>
+
+  <!-- Page header (sticky) -->
+  <div class="pageheader">
+    <div class="header-top">
+      <div class="title-line">
+        <span class="title">Senior Backend Engineer — Payments Platform</span>
+        <span class="chip active">● Active</span>
+      </div>
+      <div class="right">
+        <a href="#" class="reset-link" id="resetLink" title="Clear demo state">↻ Reset demo</a>
+        <button class="btn ghost">Export shortlist</button>
+        <button class="btn primary">Move shortlist forward</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="filter-pills" id="filterPills">
+        <button class="active" data-filter="all">All <span class="num">150</span></button>
+        <button data-filter="top10">Top 10 <span class="num">10</span></button>
+        <button data-filter="reviewed">Reviewed <span class="num">12</span></button>
+        <button data-filter="dismissed">Dismissed <span class="num">2</span></button>
+      </div>
+
+      <div class="search">
+        <span class="ico">⌕</span>
+        <input type="text" id="searchInput" placeholder="Search by ID, company, role, or text" />
+        <span class="search-clear" id="searchClear" title="Clear">✕</span>
+      </div>
+
+      <div class="right">
+        <a class="view-criteria" href="screen-1-criteria.html">← View criteria</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- LEFT: ranked list -->
+    <section class="pane-list">
+
+      <!-- Tier A -->
+      <div class="tier" id="tier-A">
+        <div class="tier-head">
+          <span class="tier-dot A"></span>
+          <span class="tier-name A">Tier A — High confidence</span>
+          <span class="tier-info" data-tooltip="The model is confident these candidates are differentiated from those below. Strong evidence on multiple must-haves.">i</span>
+          <span class="tier-count">3 candidates</span>
+        </div>
+        <div class="cand-list" data-tier="A"></div>
+      </div>
+
+      <!-- Tier B -->
+      <div class="tier" id="tier-B">
+        <div class="tier-head">
+          <span class="tier-dot B"></span>
+          <span class="tier-name B">Tier B — Statistically indistinguishable</span>
+          <span class="tier-info" data-tooltip='These 5 candidates score within the statistical-tie threshold. The model can\'t reliably separate them. Your judgment matters most here.'>i</span>
+          <span class="tier-count">5 candidates</span>
+        </div>
+        <div class="cand-list" data-tier="B"></div>
+      </div>
+
+      <!-- Tier C -->
+      <div class="tier" id="tier-C">
+        <div class="tier-head">
+          <span class="tier-dot C"></span>
+          <span class="tier-name C">Tier C — Mixed signals</span>
+          <span class="tier-info" data-tooltip="Strong on some criteria, weak on others. Worth a deeper look but expect tradeoffs.">i</span>
+          <span class="tier-count">2 candidates</span>
+        </div>
+        <div class="cand-list" data-tier="C"></div>
+      </div>
+
+      <!-- Shortlist commit line -->
+      <div class="commit-line">
+        <div class="rule"></div>
+        <div class="label">Shortlist commit line · top 10</div>
+        <div class="rule"></div>
+      </div>
+      <div class="below-head" style="margin-top:-4px;">
+        <span style="font-style:italic">Remaining 140 candidates · still visible · no auto-rejection</span>
+      </div>
+
+      <!-- Below the line -->
+      <div class="below-list" id="belowList"></div>
+      <div class="below-more">
+        <button class="btn ghost" id="showMoreBtn">Show all 140 candidates ↓</button>
+      </div>
+
+      <!-- Dismissed view (hidden unless filter active) -->
+      <div class="dismissed-section" id="dismissedSection" style="display:none;"></div>
+
+    </section>
+
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // -------- Sample data --------
+  // Tier A — high confidence (3)
+  const tierA = [
+    { id: 7, rank: 1, years: 6, employer: 'Stripe', role: 'Staff Backend Engineer', quote: 'Led distributed payments infra migration; lifted throughput 40%', reviewed: true },
+    { id: 23, rank: 2, years: 8, employer: 'Square', role: 'Senior Engineer', quote: 'Architected fraud detection at scale; reduced false positives 35%', reviewed: true },
+    { id: 41, rank: 3, years: 5, employer: 'Plaid', role: 'Senior Backend Engineer', quote: 'Owned core ledger service; sub-50ms p99 across 12B txns/yr', reviewed: false },
+  ];
+
+  // Tier B — statistically indistinguishable (5).
+  // Descriptions are deliberately similar — that visual sameness sells the framing.
+  const tierB = [
+    { id: 12, rank: 4, years: 3, employer: 'Square',  role: 'Backend Engineer',     quote: 'Built fraud-detection pipeline; team of 5; ~80M txns/day',     reviewed: true },
+    { id: 33, rank: 5, years: 4, employer: 'Adyen',   role: 'Backend Engineer',     quote: 'Built risk-scoring pipeline; team of 4; ~85M txns/day',         reviewed: true },
+    { id: 55, rank: 6, years: 4, employer: 'Shopify', role: 'Backend Engineer',     quote: 'Built billing-events pipeline; team of 5; ~75M txns/day',       reviewed: false },
+    { id: 67, rank: 7, years: 3, employer: 'Affirm',  role: 'Senior Backend Eng',   quote: 'Built underwriting pipeline; team of 4; ~70M txns/day',         reviewed: false },
+    { id: 102, rank: 8, years: 4, employer: 'Klarna', role: 'Backend Engineer',     quote: 'Built settlement pipeline; team of 5; ~80M txns/day',           reviewed: false },
+  ];
+
+  // Tier C — mixed signals (2)
+  const tierC = [
+    { id: 9,  rank: 9,  years: 4, employer: 'Google',   role: 'SWE II',           quote: 'Strong distributed-systems credentials, weak HM-criteria evidence (no payments)', reviewed: true, mixed: 'Strong skill match, weak domain evidence' },
+    { id: 88, rank: 10, years: 7, employer: 'Coinbase', role: 'Senior Engineer',  quote: 'Deep payments domain, but limited recent backend ownership',                       reviewed: false, mixed: 'Strong domain, light recent ownership' },
+  ];
+
+  // Below the line — sample of 140
+  const belowSample = [
+    { id: 4,   rank: 11, years: 6, employer: 'Square',     quote: 'Distributed cache work, light on payments specifics' },
+    { id: 19,  rank: 12, years: 9, employer: 'Microsoft',  quote: 'Senior dist-systems exp, no fintech background' },
+    { id: 27,  rank: 13, years: 4, employer: 'Robinhood',  quote: 'Trading-platform infra, ledger-adjacent' },
+    { id: 38,  rank: 14, years: 5, employer: 'Brex',       quote: 'Built API gateway and webhook delivery' },
+    { id: 44,  rank: 15, years: 3, employer: 'Square',     quote: 'Junior-leaning; payments-adjacent ML' },
+    { id: 51,  rank: 16, years: 7, employer: 'Amazon',     quote: 'Storage-team tenure, no fintech' },
+    { id: 60,  rank: 17, years: 4, employer: 'Wise',       quote: 'FX-routing service; 2 yrs ownership' },
+    { id: 71,  rank: 18, years: 6, employer: 'Toast',      quote: 'POS payments rails; team of 3' },
+    { id: 79,  rank: 19, years: 5, employer: 'Marqeta',    quote: 'Card-issuance infra; ledger background' },
+    { id: 91,  rank: 20, years: 8, employer: 'Bloomberg',  quote: 'Distributed pricing service, finance-adjacent' },
+    { id: 99,  rank: 21, years: 3, employer: 'Modern Treasury', quote: 'Bank-rail integrations; junior-leaning' },
+    { id: 108, rank: 22, years: 4, employer: 'Nubank',     quote: 'LATAM credit-decisioning service' },
+    { id: 121, rank: 23, years: 6, employer: 'Block (CashApp)', quote: 'Disbursement service; no leadership signals' },
+  ];
+
+  // -------- Shared state (localStorage) --------
+  const STORAGE_KEY = 'srOverrides';
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { overrides: [], dismissed: [] }; }
+    catch { return { overrides: [], dismissed: [] }; }
+  }
+  function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+
+  const state = loadState();
+  const overridesById = {};
+  state.overrides.forEach(o => { overridesById[o.candidate] = o; });
+
+  // Apply overrides to candidate arrays BEFORE rendering.
+  // Strategy: pluck from current location → promote=top of Tier A, demote=top of below-the-line.
+  function applyOverrides() {
+    state.overrides.forEach(o => {
+      const id = o.candidate;
+      let cand = null;
+      [tierA, tierB, tierC, belowSample].forEach(arr => {
+        const idx = arr.findIndex(c => c.id === id);
+        if (idx >= 0) cand = arr.splice(idx, 1)[0];
+      });
+      if (!cand) return;
+      cand._override = o;
+      if (o.action === 'promote') {
+        tierA.unshift(cand);
+      } else if (o.action === 'demote') {
+        belowSample.unshift(cand);
+      }
+      // dismiss handled via state.dismissed below
+    });
+    // Renumber ranks: top 10 across A/B/C, then below-the-line continuing.
+    let r = 1;
+    [tierA, tierB, tierC].forEach(arr => arr.forEach(c => c.rank = r++));
+    belowSample.forEach(c => c.rank = r++);
+  }
+  applyOverrides();
+
+  // -------- Render --------
+  const dismissed = new Set(state.dismissed || []);
+  let revealNames = false;
+
+  function render() {
+    document.querySelector('[data-tier="A"]').innerHTML = '';
+    document.querySelector('[data-tier="B"]').innerHTML = '';
+    document.querySelector('[data-tier="C"]').innerHTML = '';
+    tierA.forEach(c => renderRow(c, 'A'));
+    tierB.forEach(c => renderRow(c, 'B'));
+    tierC.forEach(c => renderRow(c, 'C'));
+
+    const below = document.getElementById('belowList');
+    below.innerHTML = '';
+    belowSample.forEach(c => renderCompact(c));
+  }
+
+  function renderRow(c, tier) {
+    const wrap = document.querySelector(`[data-tier="${tier}"]`);
+    if (dismissed.has(c.id)) return;
+    const row = document.createElement('div');
+    row.className = `cand ${tier}`;
+    row.dataset.id = c.id;
+
+    const reviewed = c.reviewed
+      ? `<span class="reviewed">● Reviewed</span><span class="dot"></span>`
+      : '';
+
+    const ovBadge = c._override
+      ? `<span class="override-badge ${c._override.action}">${c._override.action === 'promote' ? '↑ Promoted today' : '↓ Demoted today'} · was #${c._override.from}</span>`
+      : '';
+    row.innerHTML = `
+      <div class="rank">#${c.rank}</div>
+      <div class="body">
+        <div class="name">Candidate ${c.id} <span class="anon">· anonymized</span>${ovBadge}</div>
+        <div class="quote">${escapeHtml(c.quote)}</div>
+        <div class="meta">
+          ${reviewed}
+          <span>${c.years} yrs</span><span class="dot"></span>
+          <span>${c.employer}</span><span class="dot"></span>
+          <span>${c.role}</span>
+          ${c.mixed ? `<span class="dot"></span><span style="color:var(--tierC);">${c.mixed}</span>` : ''}
+        </div>
+      </div>
+      <div class="actions">
+        <button class="promote" data-action="promote">↑ Promote</button>
+        <button class="demote" data-action="demote">↓ Demote</button>
+        <button class="dismiss" data-action="dismiss">✕ Dismiss</button>
+        <button class="view" data-action="view">View →</button>
+      </div>
+    `;
+    row.addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      openDrawerStub(c);
+    });
+    row.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', e => {
+        e.stopPropagation();
+        const a = b.dataset.action;
+        if (a === 'view') openDrawerStub(c);
+        else openOverrideStub(c, a);
+      });
+    });
+    wrap.appendChild(row);
+  }
+
+  function renderCompact(c) {
+    const list = document.getElementById('belowList');
+    if (dismissed.has(c.id)) return;
+    const row = document.createElement('div');
+    row.className = 'cand-compact';
+    row.dataset.id = c.id;
+    row.innerHTML = `
+      <div class="rank">#${c.rank}</div>
+      <div class="body">
+        <span>Candidate ${c.id} · ${c.years} yrs · ${c.employer}</span>
+        <div class="quote">${escapeHtml(c.quote)}</div>
+      </div>
+      <div class="actions">
+        <button data-action="promote">↑ Promote</button>
+        <button data-action="view">View →</button>
+      </div>
+    `;
+    row.addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      openDrawerStub(c);
+    });
+    row.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', e => {
+        e.stopPropagation();
+        const a = b.dataset.action;
+        if (a === 'view') openDrawerStub(c);
+        else openOverrideStub(c, a);
+      });
+    });
+    list.appendChild(row);
+  }
+
+  // -------- Filter pills --------
+  document.querySelectorAll('#filterPills button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#filterPills button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      const f = b.dataset.filter;
+      const hide = (sel, cond) => document.querySelectorAll(sel).forEach(el => el.style.display = cond ? '' : 'none');
+      if (f === 'all') {
+        ['#tier-A', '#tier-B', '#tier-C', '.commit-line', '.below-head', '.below-list', '.below-more'].forEach(s => hide(s, true));
+      } else if (f === 'top10') {
+        ['#tier-A', '#tier-B', '#tier-C'].forEach(s => hide(s, true));
+        ['.commit-line', '.below-head', '.below-list', '.below-more'].forEach(s => hide(s, false));
+      } else if (f === 'reviewed') {
+        ['#tier-A', '#tier-B', '#tier-C'].forEach(s => hide(s, true));
+        ['.commit-line', '.below-head', '.below-list', '.below-more'].forEach(s => hide(s, false));
+        document.getElementById('dismissedSection').style.display = 'none';
+        document.querySelectorAll('.cand, .cand-compact').forEach(el => {
+          const isReviewed = el.querySelector('.reviewed') || el.querySelector('.override-badge');
+          el.style.display = isReviewed ? '' : 'none';
+        });
+        return;
+      } else if (f === 'dismissed') {
+        ['#tier-A', '#tier-B', '#tier-C', '.commit-line', '.below-head', '.below-list', '.below-more'].forEach(s => hide(s, false));
+        document.getElementById('dismissedSection').style.display = '';
+        renderDismissed();
+        return;
+      }
+      // Default: hide dismissed section, unhide all candidates
+      document.getElementById('dismissedSection').style.display = 'none';
+      document.querySelectorAll('.cand').forEach(el => el.style.display = '');
+    });
+  });
+
+  // -------- Show all 140 --------
+  document.getElementById('showMoreBtn').addEventListener('click', () => {
+    toast('In production, this expands to all 140 candidates. Sample list shown for the demo.');
+  });
+
+  // -------- Stubs for drawer / override (Screens 3 & 4) --------
+  function openDrawerStub(c) {
+    toast(`Candidate ${c.id} → opens context drawer (Screen 4)`);
+  }
+  function openOverrideStub(c, action) {
+    // For the spec demo, Candidate 12 promote uses the hero "#15 → top 10" framing.
+    // For other candidates, derive a sensible from/to based on current rank.
+    let from = c.rank, to = 'top 10';
+    if (c.id === 12 && action === 'promote') { from = 15; to = 'top 10'; }
+    else if (action === 'promote') { to = Math.max(1, c.rank - 5); }
+    else if (action === 'demote')  { to = c.rank + 6; }
+    else if (action === 'dismiss') { to = 'removed'; }
+    const url = `screen-3-override.html?candidate=${c.id}&action=${action}&from=${from}&to=${encodeURIComponent(to)}`;
+    window.location.href = url;
+  }
+
+  // -------- Update header + filter-pill counts (from real override data) --------
+  // "Reviewed today" = union of pre-marked reviewed candidates + anyone the recruiter
+  // has acted on this session (promote / demote / dismiss = an explicit review).
+  function computeReviewedIds() {
+    const baked = [...tierA, ...tierB, ...tierC, ...belowSample]
+      .filter(c => c.reviewed).map(c => c.id);
+    const touched = state.overrides.map(o => o.candidate);
+    return new Set([...baked, ...touched]);
+  }
+  function recomputeCounts() {
+    const todayReviewed  = computeReviewedIds().size;
+    const todayDismissed = dismissed.size;
+
+    const reviewedPill = document.querySelector('[data-filter="reviewed"] .num');
+    const dismissedPill = document.querySelector('[data-filter="dismissed"] .num');
+    if (reviewedPill)  reviewedPill.textContent = todayReviewed;
+    if (dismissedPill) dismissedPill.textContent = todayDismissed;
+  }
+  recomputeCounts();
+
+  // -------- Dismissed view --------
+  function findCandidate(id) {
+    const all = [...tierA, ...tierB, ...tierC, ...belowSample];
+    return all.find(c => c.id === id);
+  }
+  function fmtTime(ts) {
+    const d = new Date(ts);
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  function renderDismissed() {
+    const section = document.getElementById('dismissedSection');
+    section.innerHTML = '';
+    const dismissOverrides = state.overrides.filter(o => o.action === 'dismiss');
+    if (dismissOverrides.length === 0) {
+      section.innerHTML = `
+        <div class="dismissed-empty">
+          <div><strong style="color:var(--ink-2);">No candidates dismissed today.</strong></div>
+          <div class="hint">Dismissing a candidate from the main list will surface them here, with the reason and a restore option.</div>
+        </div>
+      `;
+      return;
+    }
+    dismissOverrides.forEach(o => {
+      const c = findCandidate(o.candidate);
+      if (!c) return;
+      const card = document.createElement('div');
+      card.className = 'dismissed-card';
+      card.innerHTML = `
+        <div class="body">
+          <div class="name">Candidate ${c.id} <span class="anon">· anonymized</span></div>
+          <div class="quote">${escapeHtml(c.quote)}</div>
+          <div class="meta">
+            <span class="reason">${escapeHtml(o.reasonLabel || 'Reason captured')}</span>
+            <span>${c.years} yrs · ${c.employer}</span>
+            <span class="dot"></span>
+            <span>Dismissed at ${fmtTime(o.ts)}</span>
+          </div>
+        </div>
+        <button class="restore" data-id="${c.id}">↶ Restore</button>
+      `;
+      card.querySelector('.restore').addEventListener('click', () => restoreCandidate(c.id));
+      section.appendChild(card);
+    });
+  }
+
+  function restoreCandidate(id) {
+    state.overrides = state.overrides.filter(o => !(o.action === 'dismiss' && o.candidate === id));
+    state.dismissed = (state.dismissed || []).filter(x => x !== id);
+    saveState(state);
+    dismissed.delete(id);
+    toast(`Candidate ${id} restored`);
+    renderDismissed();
+    recomputeCounts();
+  }
+
+  // -------- Search --------
+  const searchInput = document.getElementById('searchInput');
+  const searchClear = document.getElementById('searchClear');
+  const searchWrap = document.querySelector('.toolbar .search');
+
+  function applySearch() {
+    const q = (searchInput.value || '').trim().toLowerCase();
+    searchWrap.classList.toggle('has-text', q.length > 0);
+    document.querySelectorAll('.no-matches').forEach(el => el.remove());
+
+    let totalVisible = 0;
+
+    // Tiered candidates (top 10)
+    document.querySelectorAll('.cand-list').forEach(list => {
+      let tierVisible = 0;
+      list.querySelectorAll('.cand').forEach(row => {
+        const id = row.dataset.id;
+        const text = row.textContent.toLowerCase();
+        const match = !q || text.includes(q) || ('candidate ' + id).includes(q) || id === q;
+        row.style.display = match ? '' : 'none';
+        if (match) tierVisible++;
+      });
+      const tierWrap = list.closest('.tier');
+      if (tierWrap) tierWrap.style.display = (q && tierVisible === 0) ? 'none' : '';
+      totalVisible += tierVisible;
+    });
+
+    // Below-the-line compact rows
+    let belowVisible = 0;
+    document.querySelectorAll('.cand-compact').forEach(row => {
+      const id = row.dataset.id;
+      const text = row.textContent.toLowerCase();
+      const match = !q || text.includes(q) || ('candidate ' + id).includes(q) || id === q;
+      row.style.display = match ? '' : 'none';
+      if (match) belowVisible++;
+    });
+
+    // Hide the commit-line / below-list section if nothing matches there
+    const belowWrap = document.querySelector('.below-list');
+    const commitLine = document.querySelector('.commit-line');
+    const belowHead = document.querySelector('.below-head');
+    const belowMore = document.querySelector('.below-more');
+    [commitLine, belowHead, belowWrap, belowMore].forEach(el => {
+      if (el) el.style.display = (q && belowVisible === 0) ? 'none' : '';
+    });
+    totalVisible += belowVisible;
+
+    // Empty state
+    if (q && totalVisible === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'no-matches';
+      empty.innerHTML = `
+        <div>No candidates match <strong>"${escapeHtml(searchInput.value)}"</strong></div>
+        <div class="hint">Try a candidate ID, company, role title, or part of the evidence text.</div>
+      `;
+      document.querySelector('.pane-list').prepend(empty);
+    }
+  }
+
+  searchInput.addEventListener('input', applySearch);
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    applySearch();
+    searchInput.focus();
+  });
+
+  // -------- Reset demo state --------
+  document.getElementById('resetLink').addEventListener('click', e => {
+    e.preventDefault();
+    localStorage.removeItem(STORAGE_KEY);
+    toast('Demo state cleared · reloading');
+    setTimeout(() => window.location.reload(), 600);
+  });
+
+  // -------- Toast --------
+  let toastTimer = null;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // -------- Helpers --------
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // init
+  render();
+</script>
+</body>
+</html>
