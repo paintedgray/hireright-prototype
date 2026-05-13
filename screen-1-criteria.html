@@ -802,6 +802,12 @@
   function handleAction(f, action, card) {
     if (action === 'ack') {
       f.resolved = true;
+      pushLogEntry({
+        kind: 'ack', label: 'Acknowledged soft flag',
+        target: f.title, targetType: 'flag',
+        reasonLabel: 'Reviewed and accepted within recruiter discretion',
+        notes: '',
+      });
       renderFlags();
       return;
     }
@@ -810,6 +816,12 @@
       document.getElementById('decaySlider').value = 50;
       updateSignalUI();
       f.resolved = true;
+      pushLogEntry({
+        kind: 'ack', label: 'Adjusted per recommendation',
+        target: 'Recency-decay floor', targetType: 'flag',
+        reasonLabel: 'Auto-adjusted to recommended ≥ 50% floor',
+        notes: 'Soft flag resolved by accepting system recommendation.',
+      });
       renderAll();
       return;
     }
@@ -818,6 +830,12 @@
       document.getElementById('simSlider').value = 4;
       updateSignalUI();
       f.resolved = true;
+      pushLogEntry({
+        kind: 'ack', label: 'Adjusted per recommendation',
+        target: 'Internal-similarity weight', targetType: 'flag',
+        reasonLabel: 'Auto-adjusted to recommended 3–4 range',
+        notes: 'Soft flag resolved by accepting system recommendation.',
+      });
       renderAll();
       return;
     }
@@ -838,6 +856,12 @@
         if (!text) { ta.focus(); return; }
         state.justifications[f.id] = text;
         f.resolved = true;
+        pushLogEntry({
+          kind: 'justify', label: 'Justified soft block',
+          target: f.title, targetType: 'flag',
+          reasonLabel: 'Specific role requirement documented',
+          notes: text,
+        });
         renderFlags();
       });
       return;
@@ -846,6 +870,12 @@
       state.gates = state.gates.filter(c => c.softBlockId !== 'sb-tier');
       state.preferred = state.preferred.filter(c => c.softBlockId !== 'sb-tier');
       f.resolved = false;
+      pushLogEntry({
+        kind: 'ack', label: 'Removed criterion',
+        target: 'Top-20 university criterion', targetType: 'flag',
+        reasonLabel: 'Soft block resolved by removing criterion',
+        notes: 'Recruiter chose to remove rather than document a justification.',
+      });
       renderAll();
       return;
     }
@@ -853,6 +883,12 @@
       state.gates = state.gates.filter(c => !/no career gaps/i.test(c.text));
       state.preferred = state.preferred.filter(c => !/no career gaps/i.test(c.text));
       f.resolved = false;
+      pushLogEntry({
+        kind: 'ack', label: 'Removed criterion',
+        target: 'No-career-gaps criterion', targetType: 'flag',
+        reasonLabel: 'Hard block resolved — trajectory-judgment criteria not permitted',
+        notes: '',
+      });
       renderAll();
       return;
     }
@@ -952,6 +988,20 @@
     document.querySelector('.pane-right').scrollTo({ top: 0, behavior: 'smooth' });
   });
 
+  // -------- Audit log writes (shared state) --------
+  const STORAGE_KEY = 'srOverrides';
+  function loadAuditState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { overrides: [], dismissed: [], logEntries: [], critVersion: 3 }; }
+    catch { return { overrides: [], dismissed: [], logEntries: [], critVersion: 3 }; }
+  }
+  function saveAuditState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  function pushLogEntry(entry) {
+    const s = loadAuditState();
+    s.logEntries = s.logEntries || [];
+    s.logEntries.push({ ts: Date.now(), recruiter: 'Sara Park', ...entry });
+    saveAuditState(s);
+  }
+
   // -------- Save --------
   function showToast(msg) {
     const t = document.getElementById('toast');
@@ -974,14 +1024,44 @@
     btn.disabled = true;
     btn.textContent = 'Saving…';
 
-    // 3. Toast confirmation
-    showToast('Criteria saved · v4 · audit log updated');
+    // 3. Write to audit log
+    const s = loadAuditState();
+    const oldV = s.critVersion || 3;
+    const newV = oldV + 1;
+    s.critVersion = newV;
+    saveAuditState(s);
+    pushLogEntry({
+      kind: 'save',
+      label: 'Saved criteria',
+      target: `Criteria v${newV}`,
+      targetType: 'criteria',
+      change: `v${oldV} → v${newV}`,
+      reasonLabel: 'Criteria edits committed',
+      notes: summarizeCriteriaForLog(),
+    });
 
-    // 4. Navigate to Screen 2 after a brief beat
+    // 4. Toast confirmation
+    showToast(`Criteria saved · v${newV} · audit log updated`);
+
+    // 5. Navigate to Screen 2 after a brief beat
     setTimeout(() => {
       window.location.href = 'screen-2-ranked.html';
     }, 900);
   });
+
+  function summarizeCriteriaForLog() {
+    const gateNames = state.gates.map(g => g.text).join(', ') || '—';
+    const prefNames = state.preferred.map(p => `${p.text} (w${p.weight})`).join(', ') || '—';
+    const sig = state.signals;
+    const justifications = Object.entries(state.justifications || {})
+      .map(([id, txt]) => `[${id}] ${txt}`).join(' · ');
+    return [
+      `Gates: ${gateNames}`,
+      `Preferred: ${prefNames}`,
+      `Signal tuning: similarity=${sig.simOn ? sig.sim : 'off'} · recency floor=${sig.decay}% · quantified=${sig.quant}`,
+      justifications ? `Justifications: ${justifications}` : '',
+    ].filter(Boolean).join('\n');
+  }
 
   // -------- Cancel → back to candidate list --------
   document.getElementById('cancelBtn').addEventListener('click', () => {

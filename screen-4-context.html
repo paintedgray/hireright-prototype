@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SmartRecruiters · Candidate context — Candidate 12</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #fafbfc;
+    --border: #e5e7eb;
+    --border-strong: #d4d7dd;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --ink-4: #94a3b8;
+    --brand: #0e6b6b;
+    --brand-ink: #064e4e;
+    --brand-soft: #e6f3f3;
+    --warn: #b45309;
+    --warn-bg: #fef6e7;
+    --warn-border: #f3d795;
+    --block: #b91c1c;
+    --block-bg: #fdecec;
+    --block-border: #f3b4b4;
+    --ok: #047857;
+    --ok-bg: #e6f4ee;
+    --ok-border: #a7d4be;
+    --tierA: #0e6b6b;
+    --tierA-bg: #e6f3f3;
+    --tierB: #475569;
+    --tierB-bg: #eef2f7;
+    --tierC: #b45309;
+    --tierC-bg: #fef6e7;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04);
+    --shadow-lg: -10px 0 40px rgba(15,23,42,0.10), -2px 0 8px rgba(15,23,42,0.05);
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  /* Layout: dimmed Screen 2 ghost on left, drawer panel on right */
+  .stage {
+    display: grid; grid-template-columns: 1fr 660px;
+    height: 100vh; overflow: hidden;
+  }
+
+  /* Left: dimmed Screen 2 silhouette */
+  .ghost {
+    background: var(--bg);
+    overflow: hidden; position: relative;
+    opacity: 0.55; filter: saturate(0.7);
+    pointer-events: none;
+  }
+  .ghost::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to right, transparent 60%, rgba(15,23,42,0.05) 100%);
+  }
+  .ghost-topbar {
+    height: 56px; background: #0b2027;
+    display: flex; align-items: center; padding: 0 20px; gap: 16px;
+  }
+  .ghost-topbar .dot { width: 22px; height: 22px; border-radius: 5px; background: linear-gradient(135deg, #14b8a6, #0e6b6b); }
+  .ghost-topbar .line { width: 200px; height: 12px; background: #1e293b; border-radius: 3px; }
+  .ghost-header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+  }
+  .ghost-header .title { width: 60%; height: 18px; background: #e2e8f0; border-radius: 4px; }
+  .ghost-header .pills {
+    margin-top: 16px; display: flex; gap: 6px;
+  }
+  .ghost-header .pill {
+    width: 90px; height: 26px; background: #eef2f7; border-radius: 6px;
+  }
+  .ghost-header .pill.active { background: #cbd5e1; }
+  .ghost-list { padding: 18px 20px; display: grid; gap: 6px; }
+  .ghost-row {
+    height: 60px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; display: flex; gap: 10px; align-items: center;
+  }
+  .ghost-row.selected {
+    border-color: var(--brand); box-shadow: 0 0 0 2px rgba(14,107,107,0.15);
+  }
+  .ghost-row .num {
+    width: 30px; height: 30px; border-radius: 7px; background: var(--surface-2);
+    border: 1px solid var(--border); flex-shrink: 0;
+  }
+  .ghost-row .lines { flex: 1; display: grid; gap: 6px; }
+  .ghost-row .lines .l1 { width: 50%; height: 12px; background: #e2e8f0; border-radius: 3px; }
+  .ghost-row .lines .l2 { width: 75%; height: 10px; background: #eef2f7; border-radius: 3px; }
+  .commit-rule { height: 0; border-top: 2px dashed var(--brand); opacity: 0.4; margin: 10px 4px; }
+
+  /* Right: drawer panel */
+  .drawer {
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+    display: flex; flex-direction: column;
+    height: 100vh; overflow: hidden;
+    animation: drawerIn .28s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes drawerIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Drawer header */
+  .dhead {
+    padding: 16px 22px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dhead .row1 {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .dhead .name {
+    font-size: 17px; font-weight: 600; letter-spacing: -0.01em;
+  }
+  .dhead .anon {
+    color: var(--ink-3); font-weight: 500; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-left: 6px;
+  }
+  .dhead .reveal {
+    margin-left: auto;
+    background: transparent; border: 1px solid var(--border-strong);
+    color: var(--ink-2); padding: 5px 10px; border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .dhead .reveal:hover { background: var(--surface-2); }
+  .dhead .reveal.on { background: var(--brand-soft); border-color: #bfe1e1; color: var(--brand-ink); }
+  .dhead .close {
+    background: transparent; border: 0;
+    color: var(--ink-3); font-size: 18px; padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .dhead .close:hover { background: var(--surface-2); color: var(--ink); }
+  .dhead .row2 {
+    margin-top: 8px; display: flex; align-items: center; gap: 10px;
+    font-size: 12.5px; color: var(--ink-3);
+  }
+  .tier-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 9px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 600;
+    border: 1px solid;
+  }
+  .tier-pill.A { background: var(--tierA-bg); color: var(--tierA); border-color: #bfe1e1; }
+  .tier-pill.B { background: var(--tierB-bg); color: var(--tierB); border-color: var(--border); }
+  .tier-pill.C { background: var(--tierC-bg); color: var(--tierC); border-color: var(--warn-border); }
+  .tier-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.7; }
+
+  /* Drawer body — scrolls */
+  .dbody {
+    flex: 1; overflow-y: auto;
+    padding: 18px 22px 24px;
+  }
+
+  /* Section */
+  .section { margin-bottom: 22px; }
+  .section-head {
+    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-tag {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4);
+  }
+  .section h3 { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; }
+
+  /* Section A — snapshot card */
+  .snapshot {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  }
+  .snap-cell {
+    padding: 12px 14px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .snap-cell:nth-child(2n) { border-right: none; }
+  .snap-cell:nth-last-child(-n+2) { border-bottom: none; }
+  .snap-cell .label {
+    font-size: 11px; color: var(--ink-3);
+    text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .snap-cell .value {
+    font-size: 13.5px; font-weight: 500; color: var(--ink); line-height: 1.4;
+  }
+  .snap-cell .value .strong { color: var(--ok); font-weight: 600; }
+  .snap-cell .value .quant-jump {
+    color: var(--brand); text-decoration: none; font-weight: 500;
+    font-size: 12px;
+  }
+  .snap-cell .value .quant-jump:hover { text-decoration: underline; }
+
+  /* Section B — must-have checklist */
+  .must {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .must-row {
+    display: grid; grid-template-columns: 28px 1fr auto;
+    gap: 12px; padding: 14px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .12s ease;
+  }
+  .must-row:last-child { border-bottom: none; }
+  .must-row:hover { background: var(--surface-2); }
+  .must-row .check {
+    width: 22px; height: 22px; border-radius: 6px;
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .must-row.ok .check { background: var(--ok); color: white; }
+  .must-row.miss .check { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); }
+  .must-row .body .name {
+    font-weight: 500; font-size: 13.5px; color: var(--ink);
+  }
+  .must-row .body .name .badge-pref {
+    color: var(--ink-3); font-size: 11px; font-weight: 500;
+    margin-left: 6px;
+    padding: 1px 7px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--border);
+  }
+  .must-row .body .evidence {
+    margin-top: 4px; font-size: 12.5px; color: var(--ink-3); line-height: 1.5;
+    font-style: italic;
+  }
+  .must-row .body .evidence strong { font-style: normal; color: var(--ink-2); }
+  .must-row .body .none {
+    margin-top: 4px; font-size: 12.5px; color: var(--warn); line-height: 1.5;
+  }
+  .must-row .jump {
+    color: var(--ink-4); font-size: 12px; align-self: center;
+    transition: color .15s ease, transform .15s ease;
+  }
+  .must-row:hover .jump { color: var(--brand); transform: translateX(2px); }
+
+  /* Section C — resume excerpt */
+  .resume {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .resume .job-head {
+    margin-bottom: 8px;
+  }
+  .resume .job-head .title { font-weight: 600; font-size: 13.5px; }
+  .resume .job-head .meta { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  .resume + .resume { margin-top: 10px; }
+  .resume ul { list-style: none; padding: 0; margin: 0; }
+  .resume li {
+    padding: 7px 10px 7px 22px;
+    position: relative;
+    font-size: 13px; color: var(--ink-2); line-height: 1.55;
+    border-radius: 6px;
+  }
+  .resume li::before {
+    content: '•'; position: absolute; left: 8px; top: 6px;
+    color: var(--ink-4);
+  }
+  .resume li.match {
+    background: var(--ok-bg); border-left: 3px solid var(--ok); padding-left: 19px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .12s ease;
+  }
+  .resume li.match::before { color: var(--ok); }
+  .resume li.match:hover { background: #d1ebe0; }
+  .resume li.match.flash {
+    animation: matchFlash 1.2s ease;
+  }
+  @keyframes matchFlash {
+    0% { background: #b8e2cc; }
+    100% { background: var(--ok-bg); }
+  }
+  .resume li .quant {
+    display: inline-block; margin-right: 4px;
+    color: var(--brand);
+  }
+  .match-tag {
+    display: inline-block; margin-left: 8px;
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--ok); background: white;
+    padding: 1px 6px; border-radius: 999px;
+    border: 1px solid var(--ok-border);
+    vertical-align: middle;
+  }
+
+  /* Section D — sticky override actions */
+  .dactions {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: 12px 22px;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .dactions .hint {
+    color: var(--ink-3); font-size: 12px;
+    margin-right: auto;
+  }
+  .dactions button {
+    border: 1px solid var(--border-strong); background: var(--surface);
+    color: var(--ink); padding: 8px 14px; border-radius: 8px;
+    font-weight: 500; font-size: 13px; box-shadow: var(--shadow-sm);
+    transition: all .12s ease;
+  }
+  .dactions .promote {
+    background: var(--brand); border-color: var(--brand); color: white;
+  }
+  .dactions .promote:hover { background: var(--brand-ink); border-color: var(--brand-ink); }
+  .dactions .demote:hover { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn); }
+  .dactions .dismiss:hover { background: var(--block-bg); border-color: var(--block-border); color: var(--block); }
+
+  /* Responsive: collapse the ghost on smaller screens */
+  @media (max-width: 1024px) {
+    .stage { grid-template-columns: 1fr; }
+    .ghost { display: none; }
+    .drawer { box-shadow: none; }
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #0f172a; color: #fff; padding: 10px 16px; border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); font-size: 13px;
+    opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- LEFT: dimmed Screen 2 hint -->
+  <div class="ghost" aria-hidden="true">
+    <div class="ghost-topbar"><div class="dot"></div><div class="line"></div></div>
+    <div class="ghost-header">
+      <div class="title"></div>
+      <div class="pills">
+        <div class="pill active"></div>
+        <div class="pill"></div>
+        <div class="pill"></div>
+        <div class="pill"></div>
+      </div>
+    </div>
+    <div class="ghost-list">
+      <div class="ghost-row"><div class="num"></div><div class="lines"><div class="l1"></div><div class="l2"></div></div></div>
+      <div class="ghost-row"><div class="num"></div><div class="lines"><div class="l1"></div><div class="l2"></div></div></div>
+      <div class="ghost-row"><div class="num"></div><div class="lines"><div class="l1"></div><div class="l2"></div></div></div>
+      <div class="ghost-row"><div class="num"></div><div class="lines"><div class="l1"></div><div class="l2"></div></div></div>
+      <div class="ghost-row"><div class="num"></div><div class="lines"><div class="l1"></div><div class="l2"></div></div></div>
+      <div class="commit-rule"></div>
+      <div class="ghost-row selected"><div class="num"></div><div class="lines"><div class="l1"></div><div class="l2"></div></div></div>
+      <div class="ghost-row"><div class="num"></div><div class="lines"><div class="l1"></div><div class="l2"></div></div></div>
+      <div class="ghost-row"><div class="num"></div><div class="lines"><div class="l1"></div><div class="l2"></div></div></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: drawer -->
+  <aside class="drawer" role="dialog" aria-labelledby="candName">
+    <!-- Header -->
+    <header class="dhead">
+      <div class="row1">
+        <span id="candName" class="name">Candidate <span id="candIdLabel">12</span></span>
+        <span id="anonTag" class="anon">🔒 anonymized</span>
+        <button class="reveal" id="revealBtn">👁 Reveal name</button>
+        <button class="close" id="closeBtn" aria-label="Close">✕</button>
+      </div>
+      <div class="row2">
+        <span class="tier-pill" id="tierPill"><span class="dot"></span>Below the line · #<span id="rankLabel">15</span></span>
+        <span>· Resume parsed against active criteria · last refreshed today</span>
+      </div>
+    </header>
+
+    <!-- Body -->
+    <div class="dbody">
+
+      <!-- Section A: snapshot -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-tag">Section A</span>
+          <h3>Snapshot</h3>
+        </div>
+        <div class="snapshot" id="snapshot">
+          <div class="snap-cell">
+            <div class="label">Relevant experience</div>
+            <div class="value"><strong>6</strong> years</div>
+          </div>
+          <div class="snap-cell">
+            <div class="label">Most recent role</div>
+            <div class="value">Senior Backend Engineer @ Square (2 yrs)</div>
+          </div>
+          <div class="snap-cell">
+            <div class="label">Domain match</div>
+            <div class="value"><span class="strong">Strong</span> — fintech B2B SaaS, payments-adjacent</div>
+          </div>
+          <div class="snap-cell">
+            <div class="label">Quantified achievements</div>
+            <div class="value"><strong>4 found</strong> · <a class="quant-jump" href="#" data-jump="quant">jump to resume ↓</a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section B: must-have checklist -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-tag">Section B</span>
+          <h3>Must-have checklist</h3>
+        </div>
+        <div class="must" id="mustList">
+          <div class="must-row ok" data-jump="distsys">
+            <div class="check">✓</div>
+            <div class="body">
+              <div class="name">Distributed systems experience</div>
+              <div class="evidence">Found in Square role: <strong>"led platform migration cutting latency 60%"</strong></div>
+            </div>
+            <div class="jump">↓</div>
+          </div>
+          <div class="must-row ok" data-jump="payments">
+            <div class="check">✓</div>
+            <div class="body">
+              <div class="name">Payments domain</div>
+              <div class="evidence">Found in <strong>Square + previous Coinbase role</strong></div>
+            </div>
+            <div class="jump">↓</div>
+          </div>
+          <div class="must-row miss">
+            <div class="check">!</div>
+            <div class="body">
+              <div class="name">AI / ML experience <span class="badge-pref">Preferred · not Required</span></div>
+              <div class="none">No direct evidence found in resume. May be covered by adjacent ML work — worth confirming in interview.</div>
+            </div>
+            <div class="jump"></div>
+          </div>
+          <div class="must-row ok" data-jump="leadership">
+            <div class="check">✓</div>
+            <div class="body">
+              <div class="name">Team leadership</div>
+              <div class="evidence">Found in Square role: <strong>"led 5-person team"</strong></div>
+            </div>
+            <div class="jump">↓</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section C: resume excerpt -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-tag">Section C</span>
+          <h3>Resume excerpt</h3>
+        </div>
+
+        <!-- Job 1: Square -->
+        <div class="resume">
+          <div class="job-head">
+            <div class="title">Senior Backend Engineer · Square</div>
+            <div class="meta">Apr 2023 — Present · 2 yrs · San Francisco, CA</div>
+          </div>
+          <ul>
+            <li class="match" data-anchor="distsys">
+              <span class="quant">📊</span>
+              Led <strong>platform migration cutting p99 latency 60%</strong> across the payments-events service handling 80M txns/day.
+              <span class="match-tag">Distributed systems</span>
+            </li>
+            <li class="match" data-anchor="payments">
+              Built <strong>fraud-detection pipeline</strong> for the Cash App money-movement flow — payments-adjacent ML, 35% false-positive reduction.
+              <span class="match-tag">Payments domain</span>
+            </li>
+            <li class="match" data-anchor="leadership">
+              Led <strong>5-person team</strong> through a 6-month re-architecture; mentored two engineers through promotion.
+              <span class="match-tag">Team leadership</span>
+            </li>
+            <li>
+              <span class="quant">📊</span>
+              Owned uptime for payments-events service; raised SLO from <strong>99.9% → 99.97%</strong>.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Job 2: Coinbase -->
+        <div class="resume">
+          <div class="job-head">
+            <div class="title">Backend Engineer · Coinbase</div>
+            <div class="meta">Jun 2020 — Mar 2023 · 2 yrs 9 mos · Remote</div>
+          </div>
+          <ul>
+            <li class="match" data-anchor="payments">
+              Built <strong>settlement-reconciliation service</strong> for fiat off-ramps. Handled 12 currencies, 4 banking partners.
+              <span class="match-tag">Payments domain</span>
+            </li>
+            <li>
+              <span class="quant">📊</span>
+              Cut reconciliation processing time from <strong>4 hours → 11 min</strong> via parallelization and incremental matching.
+            </li>
+            <li>
+              <span class="quant">📊</span>
+              Owned <strong>$2B/month transaction throughput</strong> for the Coinbase Pro order-book reconciliation pipeline.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Job 3: earlier role -->
+        <div class="resume">
+          <div class="job-head">
+            <div class="title">Software Engineer · Twilio</div>
+            <div class="meta">Aug 2018 — May 2020 · 1 yr 10 mos</div>
+          </div>
+          <ul>
+            <li>
+              Built messaging-routing infrastructure for SMS delivery across 180 countries.
+            </li>
+            <li>
+              Contributed to internal Kafka-based event bus migration.
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Section D: sticky overrides -->
+    <footer class="dactions">
+      <span class="hint">Override the model:</span>
+      <button class="demote" data-action="demote">↓ Demote</button>
+      <button class="dismiss" data-action="dismiss">✕ Dismiss</button>
+      <button class="promote" data-action="promote">↑ Promote to top 10</button>
+    </footer>
+  </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // -------- URL params --------
+  const params = new URLSearchParams(window.location.search);
+  const candidateId = parseInt(params.get('candidate') || '12', 10);
+  const fromRank = params.get('from') || '15';
+
+  // -------- Minimal candidate map (fully populated for #12; others get a graceful fallback) --------
+  // For the demo, Candidate 12 is the hero — the spec-richer profile. Other candidates show a lighter view.
+  const CAND = {
+    12: { rank: 15, tier: 'Below the line', tierClass: 'B', revealName: 'Maya Chen' },
+  };
+
+  function init() {
+    const c = CAND[candidateId] || { rank: fromRank, tier: 'Below the line', tierClass: 'B' };
+    document.getElementById('candIdLabel').textContent = candidateId;
+    document.getElementById('rankLabel').textContent = c.rank;
+    const tierPill = document.getElementById('tierPill');
+    tierPill.className = `tier-pill ${c.tierClass}`;
+    tierPill.innerHTML = `<span class="dot"></span>${c.tier} · #${c.rank}`;
+
+    // For demo: only Candidate 12 has the rich profile. Show a soft note for others.
+    if (candidateId !== 12) {
+      const notice = document.createElement('div');
+      notice.style.cssText = 'padding:12px 16px; margin: 0 22px 14px; background: var(--surface-2); border:1px dashed var(--border-strong); border-radius: 10px; color: var(--ink-3); font-size: 12.5px;';
+      notice.innerHTML = '<strong style="color: var(--ink-2);">Demo focuses on Candidate 12.</strong> Profile data for other candidates would be parsed identically; this view shows the template.';
+      document.querySelector('.dbody').prepend(notice);
+    }
+  }
+  init();
+
+  // -------- Reveal name toggle --------
+  let revealed = false;
+  document.getElementById('revealBtn').addEventListener('click', () => {
+    revealed = !revealed;
+    const c = CAND[candidateId];
+    const label = document.getElementById('candName');
+    const anon = document.getElementById('anonTag');
+    const btn = document.getElementById('revealBtn');
+    if (revealed && c?.revealName) {
+      label.innerHTML = `${c.revealName} <span class="anon" style="font-weight:400;color:var(--ink-3); font-size:13px;">· #${candidateId}</span>`;
+      anon.style.display = 'none';
+      btn.classList.add('on');
+      btn.innerHTML = '🔒 Anonymize';
+    } else {
+      label.innerHTML = `Candidate <span id="candIdLabel">${candidateId}</span>`;
+      anon.style.display = '';
+      btn.classList.remove('on');
+      btn.innerHTML = '👁 Reveal name';
+    }
+  });
+
+  // -------- Jump-to-evidence --------
+  function jumpTo(anchor) {
+    const target = document.querySelector(`.resume li[data-anchor="${anchor}"]`);
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.classList.remove('flash');
+    void target.offsetWidth; // restart animation
+    target.classList.add('flash');
+  }
+  document.querySelectorAll('[data-jump]').forEach(el => {
+    el.addEventListener('click', e => {
+      const anchor = el.dataset.jump;
+      if (anchor === 'quant') {
+        // jump to first quantified bullet
+        const target = document.querySelector('.resume li .quant')?.closest('li');
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
+        }
+        e.preventDefault();
+        return;
+      }
+      jumpTo(anchor);
+    });
+  });
+
+  // -------- Override action buttons → navigate to Screen 3 --------
+  document.querySelectorAll('.dactions button').forEach(b => {
+    b.addEventListener('click', () => {
+      const action = b.dataset.action;
+      const c = CAND[candidateId];
+      let from = c?.rank || fromRank;
+      let to = 'top 10';
+      if (action === 'promote') to = 'top 10';
+      else if (action === 'demote') to = String(Number(from) + 6 || 21);
+      else if (action === 'dismiss') to = 'removed';
+      const url = `screen-3-override.html?candidate=${candidateId}&action=${action}&from=${from}&to=${encodeURIComponent(to)}`;
+      window.location.href = url;
+    });
+  });
+
+  // -------- Close → back to Screen 2 --------
+  function closeDrawer() { window.location.href = 'screen-2-ranked.html'; }
+  document.getElementById('closeBtn').addEventListener('click', closeDrawer);
+  document.querySelector('.ghost').addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+  // -------- Toast helper (for future use) --------
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>

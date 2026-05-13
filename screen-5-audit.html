@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SmartRecruiters · Decision Log — Senior Backend Engineer, Payments Platform</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #fafbfc;
+    --border: #e5e7eb;
+    --border-strong: #d4d7dd;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --ink-4: #94a3b8;
+    --brand: #0e6b6b;
+    --brand-ink: #064e4e;
+    --brand-soft: #e6f3f3;
+    --warn: #b45309;
+    --warn-bg: #fef6e7;
+    --warn-border: #f3d795;
+    --block: #b91c1c;
+    --block-bg: #fdecec;
+    --block-border: #f3b4b4;
+    --ok: #047857;
+    --ok-bg: #e6f4ee;
+    --ok-border: #a7d4be;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04);
+    --shadow-lg: 0 20px 60px rgba(15,23,42,0.18), 0 4px 16px rgba(15,23,42,0.08);
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink); background: var(--bg);
+    font-size: 14px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  /* App chrome */
+  .app { display: grid; grid-template-rows: 56px auto 1fr; min-height: 100vh; }
+  .topnav {
+    background: #0b2027; color: #cbd5e1;
+    display: flex; align-items: center; padding: 0 20px; gap: 24px;
+    border-bottom: 1px solid #0a1a20;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; color: #fff; font-weight: 700; }
+  .logo-mark {
+    width: 22px; height: 22px; border-radius: 5px;
+    background: linear-gradient(135deg, #14b8a6, #0e6b6b);
+    display: grid; place-items: center; color: white; font-size: 12px; font-weight: 800;
+  }
+  .crumbs { color: #94a3b8; display: flex; gap: 8px; align-items: center; font-size: 13px; }
+  .crumbs a { color: #cbd5e1; text-decoration: none; }
+  .crumbs .sep { color: #475569; }
+  .crumbs .here { color: #fff; font-weight: 500; }
+  .spacer { flex: 1; }
+  .user { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg,#94a3b8,#475569);
+    display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 12px;
+  }
+
+  /* Sticky page header */
+  .pageheader {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px 0;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .header-top { display: flex; align-items: center; gap: 14px; padding-bottom: 10px; }
+  .title-line { display: inline-flex; align-items: center; gap: 10px; }
+  .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500;
+    background: #eef2f7; color: var(--ink-2); border: 1px solid var(--border);
+  }
+  .chip.compliance {
+    background: var(--ok-bg); color: var(--ok); border-color: var(--ok-border);
+  }
+  .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .btn {
+    border: 1px solid var(--border-strong); background: var(--surface);
+    color: var(--ink); padding: 7px 12px; border-radius: 8px;
+    font-weight: 500; box-shadow: var(--shadow-sm); font-size: 13px;
+    transition: all .12s ease;
+  }
+  .btn:hover { background: var(--surface-2); }
+  .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .btn.primary:hover { background: var(--brand-ink); border-color: var(--brand-ink); }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--ink-2); box-shadow: none; }
+  .btn.ghost:hover { background: #eef2f7; }
+
+  /* Toolbar */
+  .toolbar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0 12px; border-top: 1px dashed var(--border);
+  }
+  .filter-pills { display: inline-flex; gap: 4px; background: #eef2f7; padding: 3px; border-radius: 8px; }
+  .filter-pills button {
+    border: 0; background: transparent; padding: 6px 12px;
+    font-size: 12.5px; font-weight: 500; color: var(--ink-3); border-radius: 6px;
+  }
+  .filter-pills button.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+  .filter-pills button .num { color: var(--ink-4); font-weight: 500; margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .filter-pills button.active .num { color: var(--ink-3); }
+  .search-box {
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: var(--surface); padding: 6px 10px;
+    display: flex; align-items: center; gap: 6px; width: 240px;
+  }
+  .search-box input { border: 0; outline: 0; flex: 1; font: inherit; color: var(--ink); background: transparent; min-width: 0; }
+  .search-box .ico { color: var(--ink-4); font-size: 13px; }
+
+  /* Main grid */
+  .main {
+    display: grid; grid-template-columns: 1fr 300px;
+    gap: 0; align-items: start;
+  }
+  .pane-log { padding: 20px 24px 80px; min-width: 0; }
+  .pane-side {
+    padding: 20px 20px 80px;
+    background: var(--surface-2);
+    border-left: 1px solid var(--border);
+    position: sticky; top: 128px;
+    align-self: start;
+  }
+
+  /* Date divider */
+  .date-row {
+    display: flex; align-items: center; gap: 12px;
+    margin: 18px 4px 10px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-size: 11px; font-weight: 700; color: var(--ink-3);
+  }
+  .date-row:first-child { margin-top: 4px; }
+  .date-row .rule { flex: 1; height: 1px; background: var(--border); }
+
+  /* Log table */
+  .log-table {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .log-row {
+    display: grid;
+    grid-template-columns: 64px 130px 130px 1.2fr 1fr 36px;
+    gap: 14px; padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; align-items: center;
+    transition: background .1s ease;
+  }
+  .log-row:last-child { border-bottom: none; }
+  .log-row:hover { background: var(--surface-2); }
+  .log-row .ts {
+    font-variant-numeric: tabular-nums; color: var(--ink-3); font-size: 12.5px;
+  }
+  .log-row .who {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--ink-2);
+  }
+  .who .av {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+    color: #fff; font-size: 10px; font-weight: 700;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .action-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 6px;
+    font-size: 11.5px; font-weight: 600;
+    text-transform: capitalize; white-space: nowrap;
+    border: 1px solid;
+  }
+  .action-tag.promote { background: var(--ok-bg); color: var(--ok); border-color: var(--ok-border); }
+  .action-tag.demote  { background: var(--warn-bg); color: var(--warn); border-color: var(--warn-border); }
+  .action-tag.dismiss { background: var(--block-bg); color: var(--block); border-color: var(--block-border); }
+  .action-tag.save    { background: var(--brand-soft); color: var(--brand-ink); border-color: #bfe1e1; }
+  .action-tag.ack, .action-tag.justify { background: #eef2f7; color: var(--ink-2); border-color: var(--border); }
+
+  .log-row .target {
+    font-weight: 500; font-size: 13px; color: var(--ink);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .log-row .target .move {
+    font-weight: 500; color: var(--ink-3); font-size: 12px; margin-left: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .log-row .reason {
+    color: var(--ink-2); font-size: 12.5px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .log-row .reason .none { color: var(--ink-4); font-style: italic; }
+  .log-row .more { color: var(--ink-4); text-align: right; }
+  .log-row:hover .more { color: var(--brand); }
+
+  /* Side stats card */
+  .side-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 14px; box-shadow: var(--shadow-sm);
+  }
+  .side-card .head {
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+  }
+  .side-card .head h3 { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: -0.005em; }
+  .side-card .head .sub { color: var(--ink-3); font-size: 11.5px; margin-top: 2px; }
+  .side-card .body { padding: 12px 14px; font-size: 12.5px; }
+
+  .big-stat { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  .big-stat .num { font-size: 28px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
+  .big-stat .lbl { color: var(--ink-3); font-size: 12px; }
+  .big-stat-foot { font-size: 11.5px; color: var(--ink-3); }
+  .richness {
+    margin-top: 10px; height: 6px; background: #eef2f7;
+    border-radius: 4px; overflow: hidden;
+  }
+  .richness .fill { height: 100%; background: var(--ok); width: 100%; }
+  .richness-label {
+    display: flex; justify-content: space-between;
+    margin-top: 4px; font-size: 11px; color: var(--ink-3);
+  }
+
+  /* Distribution bars */
+  .dist-row {
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: center; gap: 8px; padding: 6px 0;
+    font-size: 12.5px;
+  }
+  .dist-row + .dist-row { border-top: 1px solid var(--border); }
+  .dist-row .label-line {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .dist-row .lbl { color: var(--ink-2); font-size: 12px; }
+  .dist-row .bar {
+    height: 5px; background: #eef2f7; border-radius: 3px; overflow: hidden;
+  }
+  .dist-row .bar-fill { height: 100%; background: var(--brand); }
+  .dist-row .cnt { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; min-width: 16px; text-align: right; }
+
+  /* Detail drawer */
+  .detail-backdrop {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(15,23,42,0.45);
+    display: none; align-items: center; justify-content: flex-end;
+  }
+  .detail-backdrop.show { display: flex; }
+  .detail {
+    background: var(--surface); width: min(560px, 100%);
+    height: 100%; box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+    animation: detailIn .2s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes detailIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .detail .dh {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .detail .dh h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .detail .dh .close {
+    margin-left: auto; background: transparent; border: 0;
+    color: var(--ink-3); font-size: 18px; padding: 4px 8px; border-radius: 6px;
+  }
+  .detail .dh .close:hover { background: var(--surface-2); color: var(--ink); }
+  .detail .db { padding: 18px 20px; }
+  .field {
+    display: grid; grid-template-columns: 120px 1fr; gap: 16px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+  .field:last-child { border-bottom: none; }
+  .field .k { color: var(--ink-3); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; padding-top: 2px; }
+  .field .v { color: var(--ink); font-size: 13.5px; line-height: 1.5; }
+  .field .v .note {
+    background: var(--surface-2); padding: 10px 12px; border-radius: 8px;
+    border: 1px solid var(--border); white-space: pre-wrap;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .immutable {
+    margin: 12px 20px 18px; padding: 10px 12px;
+    background: var(--surface-2); border: 1px dashed var(--border-strong);
+    border-radius: 8px;
+    color: var(--ink-3); font-size: 11.5px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .immutable .ico { color: var(--ink-4); }
+
+  /* Empty state */
+  .empty {
+    padding: 36px 14px; text-align: center;
+    color: var(--ink-3); font-size: 13px;
+    background: var(--surface); border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #0f172a; color: #fff; padding: 10px 16px; border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); font-size: 13px;
+    opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+  @media (max-width: 1024px) {
+    .main { grid-template-columns: 1fr; }
+    .pane-side { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Top nav -->
+  <header class="topnav">
+    <div class="logo"><div class="logo-mark">SR</div><span>SmartRecruiters</span></div>
+    <div class="crumbs">
+      <a href="screen-2-ranked.html">Jobs</a><span class="sep">/</span>
+      <a href="screen-2-ranked.html">Senior Backend Engineer — Payments Platform</a><span class="sep">/</span>
+      <span class="here">Decision log</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="user">
+      <span>Sara Park</span>
+      <div class="avatar">SP</div>
+    </div>
+  </header>
+
+  <!-- Sticky page header -->
+  <div class="pageheader">
+    <div class="header-top">
+      <div class="title-line">
+        <span class="title">Decision log — Senior Backend Engineer, Payments Platform</span>
+        <span class="chip compliance">● Compliance-ready</span>
+      </div>
+      <div class="right">
+        <a href="screen-2-ranked.html" class="btn ghost">← Back to candidates</a>
+        <button class="btn" id="exportCsvBtn">⬇ Export CSV</button>
+        <button class="btn primary" id="exportPdfBtn">⬇ Export PDF</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="filter-pills" id="filterPills">
+        <button class="active" data-filter="all">All <span class="num" id="cntAll">0</span></button>
+        <button data-filter="overrides">Overrides <span class="num" id="cntOverrides">0</span></button>
+        <button data-filter="criteria">Criteria changes <span class="num" id="cntCriteria">0</span></button>
+        <button data-filter="ack">Flag acks <span class="num" id="cntAck">0</span></button>
+      </div>
+
+      <div class="search-box">
+        <span class="ico">⌕</span>
+        <input id="searchInput" type="text" placeholder="Search log…" />
+      </div>
+
+      <div class="right">
+        <span style="color: var(--ink-3); font-size: 12.5px;">Date range:</span>
+        <select id="dateRange" class="btn" style="padding-right: 26px; appearance: none; background-image: url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path fill='%2364748b' d='M5 7L1 3h8z'/></svg>&quot;); background-repeat: no-repeat; background-position: right 8px center;">
+          <option value="today">Today</option>
+          <option value="7" selected>Last 7 days</option>
+          <option value="30">Last 30 days</option>
+          <option value="all">All time</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="main">
+    <section class="pane-log" id="logPane">
+      <!-- log groups inserted by JS -->
+    </section>
+
+    <aside class="pane-side">
+      <div class="side-card">
+        <div class="head">
+          <h3>Decisions today</h3>
+          <div class="sub">All actions captured with structured reason</div>
+        </div>
+        <div class="body">
+          <div class="big-stat">
+            <span class="num" id="todayCount">0</span>
+            <span class="lbl">decisions</span>
+          </div>
+          <div class="big-stat-foot" id="overrideBreakdown">— overrides · — criteria · — ack</div>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <div class="head">
+          <h3>Override-reason richness</h3>
+          <div class="sub">% with structured reason category vs free text only</div>
+        </div>
+        <div class="body">
+          <div class="big-stat">
+            <span class="num" id="richnessPct">100%</span>
+          </div>
+          <div class="richness"><div class="fill" id="richnessFill"></div></div>
+          <div class="richness-label">
+            <span>Free text only</span><span>Fully structured</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <div class="head">
+          <h3>Distribution by reason</h3>
+          <div class="sub">Override reasons across the role family</div>
+        </div>
+        <div class="body" id="distBody"></div>
+      </div>
+
+      <div class="side-card">
+        <div class="head">
+          <h3>Last criteria change</h3>
+        </div>
+        <div class="body">
+          <div style="font-weight:600; font-size:13px;" id="lastCritTime">—</div>
+          <div style="color: var(--ink-3); font-size: 12px; margin-top: 2px;" id="lastCritDetail">—</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- Detail drawer -->
+<div class="detail-backdrop" id="detailBackdrop">
+  <div class="detail" id="detail">
+    <div class="dh">
+      <h2 id="detailTitle">Decision detail</h2>
+      <button class="close" id="detailClose" aria-label="Close">✕</button>
+    </div>
+    <div class="immutable">
+      <span class="ico">🔒</span>
+      <span><strong style="color: var(--ink-2);">Immutable.</strong> Past entries cannot be edited. Corrections are appended as new entries linked to the original.</span>
+    </div>
+    <div class="db" id="detailBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // -------- Shared state (localStorage) --------
+  const STORAGE_KEY = 'srOverrides';
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { overrides: [], dismissed: [] }; }
+    catch { return { overrides: [], dismissed: [] }; }
+  }
+  const state = loadState();
+
+  // -------- Baseline log entries (mock historical context — would come from server) --------
+  // Today entries occur "before this demo session"; session overrides are added on top.
+  function todayAt(h, m) {
+    const d = new Date(); d.setHours(h, m, 0, 0); return d.getTime();
+  }
+  function daysAgoAt(d, h, m) {
+    const t = new Date(); t.setDate(t.getDate() - d); t.setHours(h, m, 0, 0); return t.getTime();
+  }
+
+  const baseline = [
+    // ---- Today ----
+    { ts: todayAt(14, 17), recruiter: 'Sara Park', kind: 'save', label: 'Saved criteria',
+      target: 'Criteria v3', targetType: 'criteria',
+      reasonLabel: 'Justified soft block on recency floor',
+      notes: 'Required for ML stack rotation — older skill base for foundational systems work.',
+      change: 'v2 → v3' },
+    { ts: todayAt(13, 55), recruiter: 'Sara Park', kind: 'ack', label: 'Acknowledged soft flag',
+      target: 'Internal-similarity weight', targetType: 'flag',
+      reasonLabel: 'Reviewed and accepted within recruiter discretion',
+      notes: '' },
+    { ts: todayAt(13, 48), recruiter: 'Sara Park', kind: 'demote', label: 'Demoted',
+      target: 'Candidate 7', targetType: 'candidate', from: 3, to: 11,
+      reasonKey: 'senior', reasonLabel: 'Senior-level pattern not visible to keyword extraction',
+      notes: 'Strong on paper, weak on ownership signal during reference check.' },
+    { ts: todayAt(13, 30), recruiter: 'Sara Park', kind: 'promote', label: 'Promoted',
+      target: 'Candidate 41', targetType: 'candidate', from: 8, to: 3,
+      reasonKey: 'domain', reasonLabel: 'Domain depth not captured in resume scoring',
+      notes: 'Built core ledger at Plaid — payments infra ownership not surfaced by keyword extraction.' },
+    { ts: todayAt(12, 55), recruiter: 'Sara Park', kind: 'justify', label: 'Justified soft block',
+      target: 'Top-20 university criterion', targetType: 'flag',
+      reasonLabel: 'Specific role requirement documented',
+      notes: 'Team rotates through ML research labs that recruit primarily from these programs. Documented for compliance.' },
+    { ts: todayAt(11, 02), recruiter: 'Sara Park', kind: 'dismiss', label: 'Dismissed',
+      target: 'Candidate 88', targetType: 'candidate', from: 10, to: null,
+      reasonKey: 'musthave', reasonLabel: 'HM-specific must-have evidenced (off-resume context)',
+      notes: 'Confirmed via recruiter call: no payments-domain experience despite Coinbase tenure.' },
+
+    // ---- Yesterday ----
+    { ts: daysAgoAt(1, 17, 30), recruiter: 'Sara Park', kind: 'save', label: 'Saved criteria',
+      target: 'Criteria v2', targetType: 'criteria',
+      reasonLabel: 'Adjusted Preferred weights based on first batch review',
+      notes: 'Increased "Team leadership" weight from 2 → 3 after seeing the role expand to include mentorship.',
+      change: 'v1 → v2' },
+    { ts: daysAgoAt(1, 16, 45), recruiter: 'Sara Park', kind: 'promote', label: 'Promoted',
+      target: 'Candidate 23', targetType: 'candidate', from: 5, to: 2,
+      reasonKey: 'domain', reasonLabel: 'Domain depth not captured in resume scoring',
+      notes: 'Payments-team work at Square — ML model surfaced this as adjacent rather than direct.' },
+    { ts: daysAgoAt(1, 15, 20), recruiter: 'Sara Park', kind: 'demote', label: 'Demoted',
+      target: 'Candidate 5', targetType: 'candidate', from: 2, to: 14,
+      reasonKey: 'senior', reasonLabel: 'Senior-level pattern not visible to keyword extraction',
+      notes: 'Title says Staff but career trajectory and signals read more IC4.' },
+
+    // ---- Earlier in the week ----
+    { ts: daysAgoAt(3, 10, 15), recruiter: 'Sara Park', kind: 'save', label: 'Saved criteria',
+      target: 'Criteria v1', targetType: 'criteria',
+      reasonLabel: 'Initial role criteria saved',
+      notes: 'Role created. Initial must-haves and preferred weights set after HM intake call.',
+      change: 'created' },
+  ];
+
+  // -------- Map session overrides → log entries --------
+  function fromOverride(o) {
+    let from = o.from, to = o.to;
+    return {
+      ts: o.ts,
+      recruiter: 'Sara Park',
+      kind: o.action, // promote / demote / dismiss
+      label: o.action.charAt(0).toUpperCase() + o.action.slice(1) + (o.action.endsWith('e') ? 'd' : 'ed'),
+      target: `Candidate ${o.candidate}`,
+      targetType: 'candidate',
+      from, to,
+      reasonKey: o.reason,
+      reasonLabel: o.reasonLabel || 'Reason captured',
+      detail: o.detailLabel || '',
+      notes: o.notes || '',
+    };
+  }
+
+  // User-triggered Screen 1 events (criteria saves, flag acks, justifications)
+  const sessionLog = (state.logEntries || []).map(e => ({
+    ts: e.ts,
+    recruiter: e.recruiter || 'Sara Park',
+    kind: e.kind,
+    label: e.label,
+    target: e.target,
+    targetType: e.targetType,
+    reasonLabel: e.reasonLabel || '',
+    notes: e.notes || '',
+    change: e.change || '',
+  }));
+
+  const entries = [
+    ...baseline,
+    ...sessionLog,
+    ...state.overrides.map(fromOverride),
+  ].sort((a, b) => b.ts - a.ts);
+
+  // -------- Filtering / search --------
+  let currentFilter = 'all';
+  let currentRange = '7';
+  let currentSearch = '';
+
+  function inRange(ts) {
+    if (currentRange === 'all') return true;
+    if (currentRange === 'today') {
+      const d = new Date(); d.setHours(0, 0, 0, 0); return ts >= d.getTime();
+    }
+    const days = parseInt(currentRange, 10);
+    const cutoff = Date.now() - days * 86400000;
+    return ts >= cutoff;
+  }
+
+  function matchesFilter(e) {
+    if (currentFilter === 'all') return true;
+    if (currentFilter === 'overrides') return ['promote','demote','dismiss'].includes(e.kind);
+    if (currentFilter === 'criteria') return e.kind === 'save';
+    if (currentFilter === 'ack') return e.kind === 'ack' || e.kind === 'justify';
+    return true;
+  }
+
+  function matchesSearch(e) {
+    if (!currentSearch) return true;
+    const q = currentSearch.toLowerCase();
+    return [e.target, e.reasonLabel, e.notes, e.label, e.recruiter]
+      .filter(Boolean).some(s => s.toLowerCase().includes(q));
+  }
+
+  // -------- Render --------
+  function formatTime(ts) {
+    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  function dateKey(ts) {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const day = new Date(ts); day.setHours(0,0,0,0);
+    const diff = Math.round((today - day) / 86400000);
+    if (diff === 0) return 'Today · ' + day.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+    if (diff === 1) return 'Yesterday · ' + day.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+    return day.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+  }
+
+  function renderLog() {
+    const pane = document.getElementById('logPane');
+    pane.innerHTML = '';
+    const visible = entries.filter(e => inRange(e.ts) && matchesFilter(e) && matchesSearch(e));
+
+    if (visible.length === 0) {
+      pane.innerHTML = '<div class="empty">No log entries match the current filters.</div>';
+      return;
+    }
+
+    let lastKey = '';
+    let currentTable = null;
+
+    visible.forEach(e => {
+      const k = dateKey(e.ts);
+      if (k !== lastKey) {
+        const divider = document.createElement('div');
+        divider.className = 'date-row';
+        divider.innerHTML = `<span>${k}</span><div class="rule"></div>`;
+        pane.appendChild(divider);
+
+        currentTable = document.createElement('div');
+        currentTable.className = 'log-table';
+        pane.appendChild(currentTable);
+        lastKey = k;
+      }
+
+      const row = document.createElement('div');
+      row.className = 'log-row';
+      const moveText = (e.from != null && e.to != null) ? ` <span class="move">#${e.from} → #${e.to}</span>`
+                     : (e.from != null && e.to == null) ? ` <span class="move">#${e.from} → removed</span>` : '';
+      const changeText = e.change ? ` <span class="move">${e.change}</span>` : '';
+      row.innerHTML = `
+        <div class="ts">${formatTime(e.ts)}</div>
+        <div class="who"><div class="av">${initials(e.recruiter)}</div>${e.recruiter}</div>
+        <div><span class="action-tag ${actionClass(e.kind)}">${e.label}</span></div>
+        <div class="target">${escapeHtml(e.target)}${moveText}${changeText}</div>
+        <div class="reason">${e.reasonLabel ? escapeHtml(e.reasonLabel) : '<span class="none">—</span>'}</div>
+        <div class="more">→</div>
+      `;
+      row.addEventListener('click', () => openDetail(e));
+      currentTable.appendChild(row);
+    });
+
+    // Update filter pill counts (across full timeline, not date-filtered)
+    const allCount = entries.length;
+    const overrideCount = entries.filter(e => ['promote','demote','dismiss'].includes(e.kind)).length;
+    const critCount = entries.filter(e => e.kind === 'save').length;
+    const ackCount = entries.filter(e => e.kind === 'ack' || e.kind === 'justify').length;
+    document.getElementById('cntAll').textContent = allCount;
+    document.getElementById('cntOverrides').textContent = overrideCount;
+    document.getElementById('cntCriteria').textContent = critCount;
+    document.getElementById('cntAck').textContent = ackCount;
+  }
+
+  function actionClass(kind) {
+    if (kind === 'promote' || kind === 'demote' || kind === 'dismiss') return kind;
+    if (kind === 'save') return 'save';
+    if (kind === 'ack') return 'ack';
+    if (kind === 'justify') return 'justify';
+    return 'save';
+  }
+  function initials(name) {
+    return name.split(' ').map(p => p[0]).slice(0, 2).join('');
+  }
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // -------- Side stats --------
+  function renderStats() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const todayEntries = entries.filter(e => e.ts >= today.getTime());
+    const todayOv = todayEntries.filter(e => ['promote','demote','dismiss'].includes(e.kind)).length;
+    const todayCrit = todayEntries.filter(e => e.kind === 'save').length;
+    const todayAck = todayEntries.filter(e => e.kind === 'ack' || e.kind === 'justify').length;
+    document.getElementById('todayCount').textContent = todayEntries.length;
+    document.getElementById('overrideBreakdown').textContent =
+      `${todayOv} overrides · ${todayCrit} criteria · ${todayAck} ack`;
+
+    // Richness — overrides with both reasonKey + reasonLabel count as structured
+    const overrides = entries.filter(e => ['promote','demote','dismiss'].includes(e.kind));
+    const structured = overrides.filter(o => o.reasonKey).length;
+    const pct = overrides.length ? Math.round((structured / overrides.length) * 100) : 100;
+    document.getElementById('richnessPct').textContent = pct + '%';
+    document.getElementById('richnessFill').style.width = pct + '%';
+
+    // Distribution by reason
+    const REASON_LABELS = {
+      domain: 'Domain depth not captured',
+      metrics: 'Quantified outcomes underweighted',
+      musthave: 'HM-specific must-have evidenced',
+      senior: 'Senior-level pattern not visible',
+      other: 'Other',
+    };
+    const counts = {};
+    overrides.forEach(o => {
+      const k = o.reasonKey || 'other';
+      counts[k] = (counts[k] || 0) + 1;
+    });
+    const max = Math.max(1, ...Object.values(counts));
+    const dist = document.getElementById('distBody');
+    dist.innerHTML = '';
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    if (sorted.length === 0) {
+      dist.innerHTML = '<div style="color: var(--ink-3); font-size: 12px; padding: 4px 0;">No overrides yet.</div>';
+    } else {
+      sorted.forEach(([k, n]) => {
+        const row = document.createElement('div');
+        row.className = 'dist-row';
+        row.innerHTML = `
+          <div class="label-line">
+            <span class="lbl">${escapeHtml(REASON_LABELS[k] || k)}</span>
+            <div class="bar"><div class="bar-fill" style="width:${(n/max*100)}%"></div></div>
+          </div>
+          <span class="cnt">${n}</span>
+        `;
+        dist.appendChild(row);
+      });
+    }
+
+    // Last criteria change
+    const lastCrit = entries.find(e => e.kind === 'save');
+    if (lastCrit) {
+      document.getElementById('lastCritTime').textContent = formatTime(lastCrit.ts) + ' · ' + dateKey(lastCrit.ts).split(' · ')[0];
+      document.getElementById('lastCritDetail').textContent = (lastCrit.target || '') + (lastCrit.change ? ' (' + lastCrit.change + ')' : '');
+    }
+  }
+
+  // -------- Detail drawer --------
+  function openDetail(e) {
+    const body = document.getElementById('detailBody');
+    const title = document.getElementById('detailTitle');
+    title.textContent = `${e.label} · ${e.target}`;
+    const move = (e.from != null && e.to != null) ? `#${e.from} → #${e.to}`
+               : (e.from != null && e.to == null) ? `#${e.from} → removed` : (e.change || '—');
+    body.innerHTML = `
+      <div class="field"><div class="k">When</div><div class="v">${new Date(e.ts).toLocaleString()}</div></div>
+      <div class="field"><div class="k">Recruiter</div><div class="v">${escapeHtml(e.recruiter)}</div></div>
+      <div class="field"><div class="k">Action</div><div class="v"><span class="action-tag ${actionClass(e.kind)}">${e.label}</span></div></div>
+      <div class="field"><div class="k">Target</div><div class="v">${escapeHtml(e.target)} <span style="color:var(--ink-3); font-size: 12.5px; margin-left: 6px;">${move}</span></div></div>
+      <div class="field"><div class="k">Reason</div><div class="v">${escapeHtml(e.reasonLabel || '—')}</div></div>
+      ${e.detail ? `<div class="field"><div class="k">Reason detail</div><div class="v">${escapeHtml(e.detail)}</div></div>` : ''}
+      <div class="field"><div class="k">Notes</div><div class="v">${e.notes ? `<div class="note">${escapeHtml(e.notes)}</div>` : '<span style="color: var(--ink-4); font-style: italic;">No notes recorded</span>'}</div></div>
+      <div class="field"><div class="k">Entry ID</div><div class="v" style="font-family: ui-monospace, monospace; color: var(--ink-3); font-size: 12px;">${entryId(e)}</div></div>
+    `;
+    document.getElementById('detailBackdrop').classList.add('show');
+  }
+  function entryId(e) {
+    return 'log-' + (e.ts).toString(36) + '-' + (e.kind || 'x');
+  }
+  document.getElementById('detailClose').addEventListener('click', () => {
+    document.getElementById('detailBackdrop').classList.remove('show');
+  });
+  document.getElementById('detailBackdrop').addEventListener('click', (ev) => {
+    if (ev.target === ev.currentTarget) document.getElementById('detailBackdrop').classList.remove('show');
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('detailBackdrop').classList.remove('show');
+  });
+
+  // -------- Filters --------
+  document.querySelectorAll('#filterPills button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#filterPills button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      currentFilter = b.dataset.filter;
+      renderLog();
+    });
+  });
+  document.getElementById('dateRange').addEventListener('change', e => {
+    currentRange = e.target.value;
+    renderLog();
+  });
+  document.getElementById('searchInput').addEventListener('input', e => {
+    currentSearch = e.target.value;
+    renderLog();
+  });
+
+  // -------- Export --------
+  function csvEscape(s) {
+    if (s == null) return '';
+    const v = String(s);
+    if (/[",\n]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+    return v;
+  }
+  document.getElementById('exportCsvBtn').addEventListener('click', () => {
+    const visible = entries.filter(e => inRange(e.ts) && matchesFilter(e) && matchesSearch(e));
+    const rows = [
+      ['Timestamp', 'Recruiter', 'Action', 'Target', 'Move', 'Reason', 'Reason detail', 'Notes', 'Entry ID'],
+      ...visible.map(e => {
+        const move = e.from != null && e.to != null ? `#${e.from} -> #${e.to}`
+                   : e.from != null && e.to == null ? `#${e.from} -> removed`
+                   : (e.change || '');
+        return [
+          new Date(e.ts).toISOString(),
+          e.recruiter,
+          e.label,
+          e.target,
+          move,
+          e.reasonLabel || '',
+          e.detail || '',
+          e.notes || '',
+          entryId(e),
+        ];
+      })
+    ];
+    const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 16);
+    a.href = url; a.download = `decision-log-${stamp}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    toast(`Exported ${visible.length} entries · CSV`);
+  });
+  document.getElementById('exportPdfBtn').addEventListener('click', () => {
+    toast('PDF export would render server-side via compliance template — stubbed for demo');
+  });
+
+  // -------- Toast --------
+  let toastTimer = null;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // init
+  renderLog();
+  renderStats();
+</script>
+</body>
+</html>

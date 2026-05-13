@@ -473,7 +473,7 @@
       </div>
       <div class="right">
         <a href="#" class="reset-link" id="resetLink" title="Clear demo state">↻ Reset demo</a>
-        <button class="btn ghost">Export shortlist</button>
+        <a href="screen-5-audit.html" class="btn ghost">📋 Decision log</a>
         <button class="btn primary">Move shortlist forward</button>
       </div>
     </div>
@@ -576,7 +576,7 @@
   // Tier B — statistically indistinguishable (5).
   // Descriptions are deliberately similar — that visual sameness sells the framing.
   const tierB = [
-    { id: 12, rank: 4, years: 3, employer: 'Square',  role: 'Backend Engineer',     quote: 'Built fraud-detection pipeline; team of 5; ~80M txns/day',     reviewed: true },
+    { id: 47, rank: 4, years: 4, employer: 'Stripe',  role: 'Backend Engineer',     quote: 'Built dispute-handling pipeline; team of 5; ~80M txns/day',     reviewed: false },
     { id: 33, rank: 5, years: 4, employer: 'Adyen',   role: 'Backend Engineer',     quote: 'Built risk-scoring pipeline; team of 4; ~85M txns/day',         reviewed: true },
     { id: 55, rank: 6, years: 4, employer: 'Shopify', role: 'Backend Engineer',     quote: 'Built billing-events pipeline; team of 5; ~75M txns/day',       reviewed: false },
     { id: 67, rank: 7, years: 3, employer: 'Affirm',  role: 'Senior Backend Eng',   quote: 'Built underwriting pipeline; team of 4; ~70M txns/day',         reviewed: false },
@@ -595,15 +595,18 @@
     { id: 19,  rank: 12, years: 9, employer: 'Microsoft',  quote: 'Senior dist-systems exp, no fintech background' },
     { id: 27,  rank: 13, years: 4, employer: 'Robinhood',  quote: 'Trading-platform infra, ledger-adjacent' },
     { id: 38,  rank: 14, years: 5, employer: 'Brex',       quote: 'Built API gateway and webhook delivery' },
-    { id: 44,  rank: 15, years: 3, employer: 'Square',     quote: 'Junior-leaning; payments-adjacent ML' },
-    { id: 51,  rank: 16, years: 7, employer: 'Amazon',     quote: 'Storage-team tenure, no fintech' },
-    { id: 60,  rank: 17, years: 4, employer: 'Wise',       quote: 'FX-routing service; 2 yrs ownership' },
-    { id: 71,  rank: 18, years: 6, employer: 'Toast',      quote: 'POS payments rails; team of 3' },
-    { id: 79,  rank: 19, years: 5, employer: 'Marqeta',    quote: 'Card-issuance infra; ledger background' },
-    { id: 91,  rank: 20, years: 8, employer: 'Bloomberg',  quote: 'Distributed pricing service, finance-adjacent' },
-    { id: 99,  rank: 21, years: 3, employer: 'Modern Treasury', quote: 'Bank-rail integrations; junior-leaning' },
-    { id: 108, rank: 22, years: 4, employer: 'Nubank',     quote: 'LATAM credit-decisioning service' },
-    { id: 121, rank: 23, years: 6, employer: 'Block (CashApp)', quote: 'Disbursement service; no leadership signals' },
+    { id: 12,  rank: 15, years: 6, employer: 'Square',     role: 'Senior Backend Engineer',
+      quote: 'Led payments-events platform migration; payments-adjacent fraud ML — model missed AI/ML preferred',
+      reviewed: true },
+    { id: 44,  rank: 16, years: 3, employer: 'Square',     quote: 'Junior-leaning; payments-adjacent ML' },
+    { id: 51,  rank: 17, years: 7, employer: 'Amazon',     quote: 'Storage-team tenure, no fintech' },
+    { id: 60,  rank: 18, years: 4, employer: 'Wise',       quote: 'FX-routing service; 2 yrs ownership' },
+    { id: 71,  rank: 19, years: 6, employer: 'Toast',      quote: 'POS payments rails; team of 3' },
+    { id: 79,  rank: 20, years: 5, employer: 'Marqeta',    quote: 'Card-issuance infra; ledger background' },
+    { id: 91,  rank: 21, years: 8, employer: 'Bloomberg',  quote: 'Distributed pricing service, finance-adjacent' },
+    { id: 99,  rank: 22, years: 3, employer: 'Modern Treasury', quote: 'Bank-rail integrations; junior-leaning' },
+    { id: 108, rank: 23, years: 4, employer: 'Nubank',     quote: 'LATAM credit-decisioning service' },
+    { id: 121, rank: 24, years: 6, employer: 'Block (CashApp)', quote: 'Disbursement service; no leadership signals' },
   ];
 
   // -------- Shared state (localStorage) --------
@@ -780,18 +783,16 @@
     toast('In production, this expands to all 140 candidates. Sample list shown for the demo.');
   });
 
-  // -------- Stubs for drawer / override (Screens 3 & 4) --------
+  // -------- Open Screen 4 (drawer) on row click --------
   function openDrawerStub(c) {
-    toast(`Candidate ${c.id} → opens context drawer (Screen 4)`);
+    window.location.href = `screen-4-context.html?candidate=${c.id}&from=${c.rank}`;
   }
+  // -------- Open Screen 3 (override) on promote/demote/dismiss --------
   function openOverrideStub(c, action) {
-    // For the spec demo, Candidate 12 promote uses the hero "#15 → top 10" framing.
-    // For other candidates, derive a sensible from/to based on current rank.
     let from = c.rank, to = 'top 10';
-    if (c.id === 12 && action === 'promote') { from = 15; to = 'top 10'; }
-    else if (action === 'promote') { to = Math.max(1, c.rank - 5); }
-    else if (action === 'demote')  { to = c.rank + 6; }
-    else if (action === 'dismiss') { to = 'removed'; }
+    if (action === 'promote') to = 'top 10';
+    else if (action === 'demote')  to = c.rank + 6;
+    else if (action === 'dismiss') to = 'removed';
     const url = `screen-3-override.html?candidate=${c.id}&action=${action}&from=${from}&to=${encodeURIComponent(to)}`;
     window.location.href = url;
   }
