@@ -339,7 +339,7 @@
       <div class="step-block" id="step1">
         <div class="step-head">
           <span class="tag">Step 1 of 3</span>
-          <h3>Why are you promoting this candidate?</h3>
+          <h3 id="step1Question">Why are you promoting this candidate?</h3>
         </div>
         <div class="opts" id="reasonOpts"></div>
       </div>
@@ -409,63 +409,159 @@
   document.getElementById('actionBadge').textContent = cfg.label;
   document.getElementById('actionBadge').className = `action-badge ${cfg.cls}`;
   document.getElementById('modalTitle').textContent = `${cfg.verb} Candidate ${candidateId}`;
+  // Step 1 question is action-aware
+  const Q_BY_ACTION = {
+    promote: 'Why are you promoting this candidate?',
+    demote:  'Why are you demoting this candidate?',
+    dismiss: 'Why are you dismissing this candidate?',
+  };
+  document.getElementById('step1Question').textContent = Q_BY_ACTION[action] || Q_BY_ACTION.promote;
   document.getElementById('rankMove').innerHTML =
     `<span>#${fromRank}</span><span class="arrow">→</span><span class="${action === 'promote' ? 'to-top' : ''}">${cfg.sub}</span>`;
   document.getElementById('submitBtn').textContent = `Submit ${cfg.verb.toLowerCase()}`;
 
-  // -------- Reason taxonomy (Step 1 → Step 2 mapping) --------
-  // The suggested option per reason is the one expected to be auto-selected.
-  const REASONS = {
-    domain: {
-      label: 'Domain depth not captured in resume scoring',
-      hint:  'Resume signals miss domain-adjacent experience that you can verify.',
-      details: [
-        { id: 'd-adj',  label: 'Employer is non-financial but role was payments-adjacent', suggested: true },
-        { id: 'd-proj', label: 'Payments-adjacent experience evidenced via specific project' },
-        { id: 'd-own',  label: 'Direct payments product ownership' },
-      ],
-      patternKey: 'Domain depth',
+  // -------- Reason taxonomies — action-specific --------
+  // Each action (promote / demote / dismiss) has its own set of reason categories
+  // that fit the framing of the override.
+  const REASON_SETS = {
+    promote: {
+      domain: {
+        label: 'Domain depth not captured in resume scoring',
+        hint:  'Resume signals miss domain-adjacent experience that you can verify.',
+        details: [
+          { id: 'd-adj',  label: 'Employer is non-financial but role was payments-adjacent', suggested: true },
+          { id: 'd-proj', label: 'Payments-adjacent experience evidenced via specific project' },
+          { id: 'd-own',  label: 'Direct payments product ownership' },
+        ],
+        patternKey: 'Domain depth',
+      },
+      metrics: {
+        label: 'Quantified outcomes underweighted by model',
+        hint:  'Impact is measurable but expressed in a format the model under-counts.',
+        details: [
+          { id: 'm-fmt',  label: 'Metrics present but in non-standard format', suggested: true },
+          { id: 'm-qual', label: 'Impact expressed qualitatively with strong specificity' },
+          { id: 'm-recent', label: 'Recent role has wins not captured by keyword extraction' },
+        ],
+        patternKey: 'Quantified outcomes',
+      },
+      musthave: {
+        label: 'HM-specific must-have evidenced (off-resume context)',
+        hint:  'You have verified a must-have through context the model can\'t see.',
+        details: [
+          { id: 'h-cover', label: 'Skill mentioned in cover letter or referral, not resume', suggested: true },
+          { id: 'h-link',  label: 'Verified via LinkedIn or external portfolio' },
+          { id: 'h-portfolio', label: 'Implied by project portfolio link' },
+        ],
+        patternKey: 'HM-specific must-have',
+      },
+      senior: {
+        label: 'Senior-level pattern not visible to keyword extraction',
+        hint:  'Leadership or architectural depth that titles and keywords don\'t reveal.',
+        details: [
+          { id: 's-xfn',  label: 'Cross-functional leadership not titled', suggested: true },
+          { id: 's-arch', label: 'Architectural decision-making evidenced in projects' },
+          { id: 's-mentor', label: 'Mentorship and team-building under-keyworded' },
+        ],
+        patternKey: 'Senior-level pattern',
+      },
+      other: { label: 'Other (specify in notes)', hint: 'Not covered by the categories above — capture rationale in Step 3 notes.', details: null, patternKey: 'Other' },
     },
-    metrics: {
-      label: 'Quantified outcomes underweighted by model',
-      hint:  'Impact is measurable but expressed in a format the model under-counts.',
-      details: [
-        { id: 'm-fmt',  label: 'Metrics present but in non-standard format', suggested: true },
-        { id: 'm-qual', label: 'Impact expressed qualitatively with strong specificity' },
-        { id: 'm-recent', label: 'Recent role has wins not captured by keyword extraction' },
-      ],
-      patternKey: 'Quantified outcomes',
+
+    demote: {
+      title_inflation: {
+        label: 'Title overstates the actual signal',
+        hint:  'Resume titles suggest more seniority than the evidence supports.',
+        details: [
+          { id: 't-staff', label: 'Title says Staff but trajectory and ownership read more IC4', suggested: true },
+          { id: 't-smaller', label: 'Senior titles at a smaller firm — different bar than what we need' },
+          { id: 't-tenure', label: 'Title-vs-tenure mismatch' },
+        ],
+        patternKey: 'Title inflation',
+      },
+      metrics_thin: {
+        label: 'Quantified outcomes look strong but lack substance',
+        hint:  'Numbers are impressive but the context behind them is thin.',
+        details: [
+          { id: 'q-team', label: 'Metrics attributable to team-wide work, not candidate ownership', suggested: true },
+          { id: 'q-base', label: 'Numbers reported without baseline or methodology' },
+          { id: 'q-uncorr', label: 'Outcomes claimed but not corroborated' },
+        ],
+        patternKey: 'Outcomes thin',
+      },
+      hm_concern: {
+        label: 'HM concern surfaced (off-resume context)',
+        hint:  'Recruiter call, reference check, or HM input flagged a substantive concern.',
+        details: [
+          { id: 'h-ref',  label: 'Reference flagged ownership or scope concern', suggested: true },
+          { id: 'h-hm',   label: 'HM raised a domain-specific concern after review' },
+          { id: 'h-call', label: 'Recruiter call revealed weaker fit than resume suggested' },
+        ],
+        patternKey: 'HM concern',
+      },
+      senior_thin: {
+        label: 'Senior-level pattern absent despite title',
+        hint:  'Title implies senior but leadership / architecture evidence is thin.',
+        details: [
+          { id: 's-noleadership', label: 'No leadership signals despite Staff or Senior title', suggested: true },
+          { id: 's-depth', label: 'Project depth doesn\'t match expected seniority' },
+          { id: 's-traj',  label: 'Trajectory reads more IC than the title indicates' },
+        ],
+        patternKey: 'Senior pattern thin',
+      },
+      other: { label: 'Other (specify in notes)', hint: 'Not covered by the categories above — capture rationale in Step 3 notes.', details: null, patternKey: 'Other' },
     },
-    musthave: {
-      label: 'HM-specific must-have evidenced (off-resume context)',
-      hint:  'You have verified a must-have through context the model can\'t see.',
-      details: [
-        { id: 'h-cover', label: 'Skill mentioned in cover letter or referral, not resume', suggested: true },
-        { id: 'h-link',  label: 'Verified via LinkedIn or external portfolio' },
-        { id: 'h-portfolio', label: 'Implied by project portfolio link' },
-      ],
-      patternKey: 'HM-specific must-have',
-    },
-    senior: {
-      label: 'Senior-level pattern not visible to keyword extraction',
-      hint:  'Leadership or architectural depth that titles and keywords don\'t reveal.',
-      details: [
-        { id: 's-xfn',  label: 'Cross-functional leadership not titled', suggested: true },
-        { id: 's-arch', label: 'Architectural decision-making evidenced in projects' },
-        { id: 's-mentor', label: 'Mentorship and team-building under-keyworded' },
-      ],
-      patternKey: 'Senior-level pattern',
-    },
-    other: {
-      label: 'Other (specify in notes)',
-      hint:  'Not covered by the categories above — capture rationale in Step 3 notes.',
-      details: null,
-      patternKey: 'Other',
+
+    dismiss: {
+      domain_absent: {
+        label: 'Domain experience verified absent',
+        hint:  'Recruiter call or off-resume context confirmed key domain experience is missing.',
+        details: [
+          { id: 'da-call', label: 'Confirmed via recruiter call — no real payments-domain exposure', suggested: true },
+          { id: 'da-adj',  label: 'Adjacent industry only — not transferable' },
+          { id: 'da-imply', label: 'Resume implies domain but doesn\'t hold up under scrutiny' },
+        ],
+        patternKey: 'Domain absent',
+      },
+      hard_req: {
+        label: 'Hard requirement not met (off-resume)',
+        hint:  'A must-have is confirmed absent via context the model couldn\'t check.',
+        details: [
+          { id: 'r-visa', label: 'Visa or work-authorization mismatch', suggested: true },
+          { id: 'r-comp', label: 'Comp expectation outside band' },
+          { id: 'r-loc',  label: 'Location or availability mismatch' },
+        ],
+        patternKey: 'Hard requirement',
+      },
+      candidate_unavailable: {
+        label: 'Candidate withdrew or unresponsive',
+        hint:  'Candidate has indicated they\'re not pursuing this role.',
+        details: [
+          { id: 'u-other', label: 'Already accepted another offer', suggested: true },
+          { id: 'u-quiet', label: 'Declined to engage after multiple outreach attempts' },
+          { id: 'u-internal', label: 'Active in pipeline for another role at this company' },
+        ],
+        patternKey: 'Candidate unavailable',
+      },
+      hm_nogo: {
+        label: 'Off-fit signal from HM or reference',
+        hint:  'HM or reference signaled clear non-fit after review.',
+        details: [
+          { id: 'n-hm',  label: 'HM screen revealed clear non-fit', suggested: true },
+          { id: 'n-ref', label: 'Reference check raised significant concern' },
+          { id: 'n-prior', label: 'Prior loop at this company — known no-go' },
+        ],
+        patternKey: 'HM/ref no-go',
+      },
+      other: { label: 'Other (specify in notes)', hint: 'Not covered by the categories above — capture rationale in Step 3 notes.', details: null, patternKey: 'Other' },
     },
   };
 
+  // Pick the active reason set based on the action this modal is capturing
+  const REASONS = REASON_SETS[action] || REASON_SETS.promote;
+
   // -------- Patterns (mock — would come from the audit log) --------
-  // existingCount per reason — for the spec demo, "Domain depth" is at 2 prior, so this is the 3rd.
+  // Prior counts per reason key. Only the promote/Domain demo case fires the nudge in the demo.
   const PRIOR_COUNTS = { domain: 2, metrics: 0, musthave: 1, senior: 0, other: 0 };
 
   // -------- Demo defaults (per spec): pre-select reason if promoting Candidate 12 --------
