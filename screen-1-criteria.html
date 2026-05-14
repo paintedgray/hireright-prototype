@@ -673,9 +673,20 @@
 
     // Save button gating
     const hasUnresolvedHard = counts.hard > 0;
+    const hasUnresolvedBlock = counts.block > 0;
     const saveBtn = document.getElementById('saveBtn');
-    saveBtn.disabled = hasUnresolvedHard;
-    document.getElementById('saveBlockReason').style.display = hasUnresolvedHard ? '' : 'none';
+    saveBtn.disabled = hasUnresolvedHard || hasUnresolvedBlock;
+
+    const reasonEl = document.getElementById('saveBlockReason');
+    if (hasUnresolvedHard) {
+      reasonEl.textContent = `${counts.hard} hard block${counts.hard > 1 ? 's' : ''} must be resolved`;
+      reasonEl.style.display = '';
+    } else if (hasUnresolvedBlock) {
+      reasonEl.textContent = `${counts.block} soft block${counts.block > 1 ? 's' : ''} must be resolved — document or remove`;
+      reasonEl.style.display = '';
+    } else {
+      reasonEl.style.display = 'none';
+    }
   }
 
   function renderActions(f) {
