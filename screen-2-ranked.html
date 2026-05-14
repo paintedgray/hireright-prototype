@@ -258,10 +258,6 @@
     display: inline-flex; gap: 8px; align-items: center;
   }
   .cand .body .meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-4); display: inline-block; }
-  .cand .body .meta .reviewed {
-    color: var(--ok); font-weight: 600;
-    display: inline-flex; align-items: center; gap: 4px;
-  }
   .override-badge {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 2px 8px; border-radius: 999px;
@@ -482,8 +478,7 @@
       <div class="filter-pills" id="filterPills">
         <button class="active" data-filter="all">All <span class="num">150</span></button>
         <button data-filter="top10">Top 10 <span class="num">10</span></button>
-        <button data-filter="reviewed">Reviewed <span class="num">12</span></button>
-        <button data-filter="dismissed">Dismissed <span class="num">2</span></button>
+        <button data-filter="dismissed">Dismissed <span class="num">0</span></button>
       </div>
 
       <div class="search">
@@ -568,25 +563,25 @@
   // -------- Sample data --------
   // Tier A — high confidence (3)
   const tierA = [
-    { id: 7, rank: 1, years: 6, employer: 'Stripe', role: 'Staff Backend Engineer', quote: 'Led distributed payments infra migration; lifted throughput 40%', reviewed: true },
-    { id: 23, rank: 2, years: 8, employer: 'Square', role: 'Senior Engineer', quote: 'Architected fraud detection at scale; reduced false positives 35%', reviewed: true },
-    { id: 41, rank: 3, years: 5, employer: 'Plaid', role: 'Senior Backend Engineer', quote: 'Owned core ledger service; sub-50ms p99 across 12B txns/yr', reviewed: false },
+    { id: 7, rank: 1, years: 6, employer: 'Stripe', role: 'Staff Backend Engineer', quote: 'Led distributed payments infra migration; lifted throughput 40%' },
+    { id: 23, rank: 2, years: 8, employer: 'Square', role: 'Senior Engineer', quote: 'Architected fraud detection at scale; reduced false positives 35%' },
+    { id: 41, rank: 3, years: 5, employer: 'Plaid', role: 'Senior Backend Engineer', quote: 'Owned core ledger service; sub-50ms p99 across 12B txns/yr' },
   ];
 
   // Tier B — statistically indistinguishable (5).
   // Descriptions are deliberately similar — that visual sameness sells the framing.
   const tierB = [
-    { id: 47, rank: 4, years: 4, employer: 'Stripe',  role: 'Backend Engineer',     quote: 'Built dispute-handling pipeline; team of 5; ~80M txns/day',     reviewed: false },
-    { id: 33, rank: 5, years: 4, employer: 'Adyen',   role: 'Backend Engineer',     quote: 'Built risk-scoring pipeline; team of 4; ~85M txns/day',         reviewed: true },
-    { id: 55, rank: 6, years: 4, employer: 'Shopify', role: 'Backend Engineer',     quote: 'Built billing-events pipeline; team of 5; ~75M txns/day',       reviewed: false },
-    { id: 67, rank: 7, years: 3, employer: 'Affirm',  role: 'Senior Backend Eng',   quote: 'Built underwriting pipeline; team of 4; ~70M txns/day',         reviewed: false },
-    { id: 102, rank: 8, years: 4, employer: 'Klarna', role: 'Backend Engineer',     quote: 'Built settlement pipeline; team of 5; ~80M txns/day',           reviewed: false },
+    { id: 47, rank: 4, years: 4, employer: 'Stripe',  role: 'Backend Engineer',     quote: 'Built dispute-handling pipeline; team of 5; ~80M txns/day' },
+    { id: 33, rank: 5, years: 4, employer: 'Adyen',   role: 'Backend Engineer',     quote: 'Built risk-scoring pipeline; team of 4; ~85M txns/day' },
+    { id: 55, rank: 6, years: 4, employer: 'Shopify', role: 'Backend Engineer',     quote: 'Built billing-events pipeline; team of 5; ~75M txns/day' },
+    { id: 67, rank: 7, years: 3, employer: 'Affirm',  role: 'Senior Backend Eng',   quote: 'Built underwriting pipeline; team of 4; ~70M txns/day' },
+    { id: 102, rank: 8, years: 4, employer: 'Klarna', role: 'Backend Engineer',     quote: 'Built settlement pipeline; team of 5; ~80M txns/day' },
   ];
 
   // Tier C — mixed signals (2)
   const tierC = [
-    { id: 9,  rank: 9,  years: 4, employer: 'Google',   role: 'SWE II',           quote: 'Strong distributed-systems credentials, weak HM-criteria evidence (no payments)', reviewed: true, mixed: 'Strong skill match, weak domain evidence' },
-    { id: 88, rank: 10, years: 7, employer: 'Coinbase', role: 'Senior Engineer',  quote: 'Deep payments domain, but limited recent backend ownership',                       reviewed: false, mixed: 'Strong domain, light recent ownership' },
+    { id: 9,  rank: 9,  years: 4, employer: 'Google',   role: 'SWE II',           quote: 'Strong distributed-systems credentials, weak HM-criteria evidence (no payments)', mixed: 'Strong skill match, weak domain evidence' },
+    { id: 88, rank: 10, years: 7, employer: 'Coinbase', role: 'Senior Engineer',  quote: 'Deep payments domain, but limited recent backend ownership',                       mixed: 'Strong domain, light recent ownership' },
   ];
 
   // Below the line — sample of 140
@@ -596,8 +591,7 @@
     { id: 27,  rank: 13, years: 4, employer: 'Robinhood',  quote: 'Trading-platform infra, ledger-adjacent' },
     { id: 38,  rank: 14, years: 5, employer: 'Brex',       quote: 'Built API gateway and webhook delivery' },
     { id: 12,  rank: 15, years: 6, employer: 'Square',     role: 'Senior Backend Engineer',
-      quote: 'Led payments-events platform migration; payments-adjacent fraud ML — model missed AI/ML preferred',
-      reviewed: true },
+      quote: 'Led payments-events platform migration; payments-adjacent fraud ML — model missed AI/ML preferred' },
     { id: 44,  rank: 16, years: 3, employer: 'Square',     quote: 'Junior-leaning; payments-adjacent ML' },
     { id: 51,  rank: 17, years: 7, employer: 'Amazon',     quote: 'Storage-team tenure, no fintech' },
     { id: 60,  rank: 18, years: 4, employer: 'Wise',       quote: 'FX-routing service; 2 yrs ownership' },
@@ -671,10 +665,6 @@
     row.className = `cand ${tier}`;
     row.dataset.id = c.id;
 
-    const reviewed = c.reviewed
-      ? `<span class="reviewed">● Reviewed</span><span class="dot"></span>`
-      : '';
-
     const ovBadge = c._override
       ? `<span class="override-badge ${c._override.action}">${c._override.action === 'promote' ? '↑ Promoted today' : '↓ Demoted today'} · was #${c._override.from}</span>`
       : '';
@@ -684,7 +674,6 @@
         <div class="name">Candidate ${c.id} <span class="anon">· anonymized</span>${ovBadge}</div>
         <div class="quote">${escapeHtml(c.quote)}</div>
         <div class="meta">
-          ${reviewed}
           <span>${c.years} yrs</span><span class="dot"></span>
           <span>${c.employer}</span><span class="dot"></span>
           <span>${c.role}</span>
@@ -757,15 +746,6 @@
       } else if (f === 'top10') {
         ['#tier-A', '#tier-B', '#tier-C'].forEach(s => hide(s, true));
         ['.commit-line', '.below-head', '.below-list', '.below-more'].forEach(s => hide(s, false));
-      } else if (f === 'reviewed') {
-        ['#tier-A', '#tier-B', '#tier-C'].forEach(s => hide(s, true));
-        ['.commit-line', '.below-head', '.below-list', '.below-more'].forEach(s => hide(s, false));
-        document.getElementById('dismissedSection').style.display = 'none';
-        document.querySelectorAll('.cand, .cand-compact').forEach(el => {
-          const isReviewed = el.querySelector('.reviewed') || el.querySelector('.override-badge');
-          el.style.display = isReviewed ? '' : 'none';
-        });
-        return;
       } else if (f === 'dismissed') {
         ['#tier-A', '#tier-B', '#tier-C', '.commit-line', '.below-head', '.below-list', '.below-more'].forEach(s => hide(s, false));
         document.getElementById('dismissedSection').style.display = '';
@@ -797,22 +777,10 @@
     window.location.href = url;
   }
 
-  // -------- Update header + filter-pill counts (from real override data) --------
-  // "Reviewed today" = union of pre-marked reviewed candidates + anyone the recruiter
-  // has acted on this session (promote / demote / dismiss = an explicit review).
-  function computeReviewedIds() {
-    const baked = [...tierA, ...tierB, ...tierC, ...belowSample]
-      .filter(c => c.reviewed).map(c => c.id);
-    const touched = state.overrides.map(o => o.candidate);
-    return new Set([...baked, ...touched]);
-  }
+  // -------- Update filter-pill counts (from real override data) --------
   function recomputeCounts() {
-    const todayReviewed  = computeReviewedIds().size;
     const todayDismissed = dismissed.size;
-
-    const reviewedPill = document.querySelector('[data-filter="reviewed"] .num');
     const dismissedPill = document.querySelector('[data-filter="dismissed"] .num');
-    if (reviewedPill)  reviewedPill.textContent = todayReviewed;
     if (dismissedPill) dismissedPill.textContent = todayDismissed;
   }
   recomputeCounts();
