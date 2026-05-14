@@ -327,11 +327,7 @@
     border-top: 1px solid var(--border);
     background: var(--surface);
     padding: 12px 22px;
-    display: flex; gap: 8px; align-items: center;
-  }
-  .dactions .hint {
-    color: var(--ink-3); font-size: 12px;
-    margin-right: auto;
+    display: flex; gap: 8px; align-items: center; justify-content: flex-end;
   }
   .dactions button {
     border: 1px solid var(--border-strong); background: var(--surface);
@@ -405,7 +401,6 @@
       </div>
       <div class="row2">
         <span class="tier-pill" id="tierPill"><span class="dot"></span>Below the line · #<span id="rankLabel">15</span></span>
-        <span>· Resume parsed against active criteria · last refreshed today</span>
       </div>
     </header>
 
@@ -414,7 +409,6 @@
 
     <!-- Section D: sticky overrides -->
     <footer class="dactions">
-      <span class="hint">Override the model:</span>
       <button class="demote" data-action="demote">↓ Demote</button>
       <button class="dismiss" data-action="dismiss">✕ Dismiss</button>
       <button class="promote" data-action="promote">↑ Promote to top 10</button>
