@@ -391,152 +391,8 @@
       </div>
     </header>
 
-    <!-- Body -->
-    <div class="dbody">
-
-      <!-- Section A: snapshot -->
-      <div class="section">
-        <div class="section-head">
-          <span class="section-tag">Section A</span>
-          <h3>Snapshot</h3>
-        </div>
-        <div class="snapshot" id="snapshot">
-          <div class="snap-cell">
-            <div class="label">Relevant experience</div>
-            <div class="value"><strong>6</strong> years</div>
-          </div>
-          <div class="snap-cell">
-            <div class="label">Most recent role</div>
-            <div class="value">Senior Backend Engineer @ Square (2 yrs)</div>
-          </div>
-          <div class="snap-cell">
-            <div class="label">Domain match</div>
-            <div class="value"><span class="strong">Strong</span> — fintech B2B SaaS, payments-adjacent</div>
-          </div>
-          <div class="snap-cell">
-            <div class="label">Quantified achievements</div>
-            <div class="value"><strong>4 found</strong> · <a class="quant-jump" href="#" data-jump="quant">jump to resume ↓</a></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section B: must-have checklist -->
-      <div class="section">
-        <div class="section-head">
-          <span class="section-tag">Section B</span>
-          <h3>Must-have checklist</h3>
-        </div>
-        <div class="must" id="mustList">
-          <div class="must-row ok" data-jump="distsys">
-            <div class="check">✓</div>
-            <div class="body">
-              <div class="name">Distributed systems experience</div>
-              <div class="evidence">Found in Square role: <strong>"led platform migration cutting latency 60%"</strong></div>
-            </div>
-            <div class="jump">↓</div>
-          </div>
-          <div class="must-row ok" data-jump="payments">
-            <div class="check">✓</div>
-            <div class="body">
-              <div class="name">Payments domain</div>
-              <div class="evidence">Found in <strong>Square + previous Coinbase role</strong></div>
-            </div>
-            <div class="jump">↓</div>
-          </div>
-          <div class="must-row miss">
-            <div class="check">!</div>
-            <div class="body">
-              <div class="name">AI / ML experience <span class="badge-pref">Preferred · not Required</span></div>
-              <div class="none">No direct evidence found in resume. May be covered by adjacent ML work — worth confirming in interview.</div>
-            </div>
-            <div class="jump"></div>
-          </div>
-          <div class="must-row ok" data-jump="leadership">
-            <div class="check">✓</div>
-            <div class="body">
-              <div class="name">Team leadership</div>
-              <div class="evidence">Found in Square role: <strong>"led 5-person team"</strong></div>
-            </div>
-            <div class="jump">↓</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section C: resume excerpt -->
-      <div class="section">
-        <div class="section-head">
-          <span class="section-tag">Section C</span>
-          <h3>Resume excerpt</h3>
-        </div>
-
-        <!-- Job 1: Square -->
-        <div class="resume">
-          <div class="job-head">
-            <div class="title">Senior Backend Engineer · Square</div>
-            <div class="meta">Apr 2023 — Present · 2 yrs · San Francisco, CA</div>
-          </div>
-          <ul>
-            <li class="match" data-anchor="distsys">
-              <span class="quant">📊</span>
-              Led <strong>platform migration cutting p99 latency 60%</strong> across the payments-events service handling 80M txns/day.
-              <span class="match-tag">Distributed systems</span>
-            </li>
-            <li class="match" data-anchor="payments">
-              Built <strong>fraud-detection pipeline</strong> for the Cash App money-movement flow — payments-adjacent ML, 35% false-positive reduction.
-              <span class="match-tag">Payments domain</span>
-            </li>
-            <li class="match" data-anchor="leadership">
-              Led <strong>5-person team</strong> through a 6-month re-architecture; mentored two engineers through promotion.
-              <span class="match-tag">Team leadership</span>
-            </li>
-            <li>
-              <span class="quant">📊</span>
-              Owned uptime for payments-events service; raised SLO from <strong>99.9% → 99.97%</strong>.
-            </li>
-          </ul>
-        </div>
-
-        <!-- Job 2: Coinbase -->
-        <div class="resume">
-          <div class="job-head">
-            <div class="title">Backend Engineer · Coinbase</div>
-            <div class="meta">Jun 2020 — Mar 2023 · 2 yrs 9 mos · Remote</div>
-          </div>
-          <ul>
-            <li class="match" data-anchor="payments">
-              Built <strong>settlement-reconciliation service</strong> for fiat off-ramps. Handled 12 currencies, 4 banking partners.
-              <span class="match-tag">Payments domain</span>
-            </li>
-            <li>
-              <span class="quant">📊</span>
-              Cut reconciliation processing time from <strong>4 hours → 11 min</strong> via parallelization and incremental matching.
-            </li>
-            <li>
-              <span class="quant">📊</span>
-              Owned <strong>$2B/month transaction throughput</strong> for the Coinbase Pro order-book reconciliation pipeline.
-            </li>
-          </ul>
-        </div>
-
-        <!-- Job 3: earlier role -->
-        <div class="resume">
-          <div class="job-head">
-            <div class="title">Software Engineer · Twilio</div>
-            <div class="meta">Aug 2018 — May 2020 · 1 yr 10 mos</div>
-          </div>
-          <ul>
-            <li>
-              Built messaging-routing infrastructure for SMS delivery across 180 countries.
-            </li>
-            <li>
-              Contributed to internal Kafka-based event bus migration.
-            </li>
-          </ul>
-        </div>
-
-      </div>
-
-    </div>
+    <!-- Body — populated by renderBody() based on candidate ID -->
+    <div class="dbody" id="dbody"></div>
 
     <!-- Section D: sticky overrides -->
     <footer class="dactions">
@@ -556,27 +412,294 @@
   const candidateId = parseInt(params.get('candidate') || '12', 10);
   const fromRank = params.get('from') || '15';
 
-  // -------- Minimal candidate map (fully populated for #12; others get a graceful fallback) --------
-  // For the demo, Candidate 12 is the hero — the spec-richer profile. Other candidates show a lighter view.
+  // -------- Candidate data registry --------
+  // Four candidates have rich profiles: the three Tier A candidates (7, 23, 41) + Candidate 12 (below-line, hero promote).
   const CAND = {
-    12: { rank: 15, tier: 'Below the line', tierClass: 'B', revealName: 'Maya Chen' },
+    7: {
+      rank: 1, tier: 'Tier A — High confidence', tierClass: 'A', revealName: 'Priya Krishnan',
+      snapshot: {
+        years: 6,
+        mostRecent: 'Staff Backend Engineer @ Stripe (3 yrs)',
+        domain: { strength: 'Strong', detail: 'direct payments infrastructure ownership' },
+        quantCount: 5,
+      },
+      mustHaves: [
+        { status: 'ok', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Stripe role: <strong>"led infra migration lifting throughput 40%"</strong>' },
+        { status: 'ok', name: 'Payments domain', anchor: 'payments',
+          evidence: 'Direct — <strong>Stripe core payments + prior Robinhood and Affirm roles</strong>' },
+        { status: 'ok', name: 'AI / ML experience', anchor: 'ml', preferred: true,
+          evidence: 'Contributor to Stripe Radar — <strong>fraud-detection rule pipeline</strong>' },
+        { status: 'ok', name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Stripe role: <strong>"tech-lead pod of 7; promoted 2 ICs"</strong>' },
+      ],
+      resume: [
+        { title: 'Staff Backend Engineer · Stripe', meta: 'Aug 2022 — Present · 3 yrs · San Francisco, CA',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Led infrastructure migration of the payments-events service — <strong>throughput +40%</strong>, p99 latency 180ms → 95ms.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Owned <strong>card-rails integration roadmap</strong> across 5 partner gateways; shipped Plaid-rails interop.' },
+            { match: 'ml', tag: 'AI/ML',
+              text: 'Contributor to <strong>Radar rule pipeline</strong> — added two heuristics lifting fraud catch-rate 8% at neutral false-positive rate.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Tech-lead for a <strong>7-engineer pod</strong>; promoted two ICs to senior.' },
+          ]},
+        { title: 'Senior Backend Engineer · Robinhood', meta: 'Apr 2020 — Jul 2022 · 2 yrs 4 mos · Menlo Park, CA',
+          bullets: [
+            { match: 'distsys', quant: true,
+              text: 'Architected <strong>order-routing distributed system</strong> handling 6M txns/sec at peak.' },
+            { match: 'payments',
+              text: 'Built clearing-and-settlement reconciliation across equities and crypto rails.' },
+          ]},
+        { title: 'Backend Engineer · Affirm', meta: 'Jun 2019 — Mar 2020 · 10 mos',
+          bullets: [
+            { text: 'Worked on underwriting service; contributed to internal Kafka rollout.' },
+          ]},
+      ]
+    },
+
+    23: {
+      rank: 2, tier: 'Tier A — High confidence', tierClass: 'A', revealName: 'Marcus Holloway',
+      snapshot: {
+        years: 8,
+        mostRecent: 'Senior Engineer @ Square (3 yrs)',
+        domain: { strength: 'Strong', detail: 'fraud detection at fintech scale' },
+        quantCount: 6,
+      },
+      mustHaves: [
+        { status: 'ok', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Square role: <strong>"fraud-scoring service at 200M evals/day"</strong>' },
+        { status: 'ok', name: 'Payments domain', anchor: 'payments',
+          evidence: 'Direct — <strong>Square fraud + prior Visa risk-analytics role</strong>' },
+        { status: 'ok', name: 'AI / ML experience', anchor: 'ml', preferred: true,
+          evidence: 'Owned <strong>ML feature-store and online inference</strong> for fraud scoring at Square.' },
+        { status: 'ok', name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Square role: <strong>"mentored 4 engineers; led architecture for fraud platform"</strong>' },
+      ],
+      resume: [
+        { title: 'Senior Engineer · Square', meta: 'Feb 2022 — Present · 3 yrs · San Francisco, CA',
+          bullets: [
+            { match: 'ml', quant: true, tag: 'AI/ML',
+              text: 'Architected <strong>fraud detection at scale</strong> — reduced false positives 35% while holding catch-rate flat.' },
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Owned <strong>fraud-scoring service</strong> handling 200M evals/day with sub-25ms p99.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Mentored 4 engineers; led architecture review for the fraud platform.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Partnered with policy team on chargeback dispute automation — <strong>$11M annual savings</strong>.' },
+          ]},
+        { title: 'Backend Engineer · Visa', meta: 'May 2020 — Jan 2022 · 1 yr 9 mos · Foster City, CA',
+          bullets: [
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Worked on <strong>risk-analytics platform</strong> for issuer-side authorization decisions.' },
+            { match: 'distsys', quant: true,
+              text: 'Migrated batch scoring jobs to streaming — cut decision lag <strong>24hr → 90s</strong>.' },
+          ]},
+        { title: 'Software Engineer · Amazon', meta: 'Jul 2017 — Apr 2020 · 2 yrs 10 mos · Seattle, WA',
+          bullets: [
+            { text: 'Worked on internal forecasting tools for Supply Chain Optimization Tech.' },
+            { quant: true,
+              text: 'Owned a service handling <strong>~12B forecast records/week</strong>.' },
+          ]},
+      ]
+    },
+
+    41: {
+      rank: 3, tier: 'Tier A — High confidence', tierClass: 'A', revealName: 'Aanya Sharma',
+      snapshot: {
+        years: 5,
+        mostRecent: 'Senior Backend Engineer @ Plaid (2 yrs)',
+        domain: { strength: 'Strong', detail: 'core ledger and bank-rail systems' },
+        quantCount: 4,
+      },
+      mustHaves: [
+        { status: 'ok', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Plaid role: <strong>"core ledger service · sub-50ms p99 across 12B txns/yr"</strong>' },
+        { status: 'ok', name: 'Payments domain', anchor: 'payments',
+          evidence: 'Direct — <strong>Plaid bank-rails + prior Modern Treasury role</strong>' },
+        { status: 'miss', name: 'AI / ML experience', preferred: true,
+          none: 'No direct evidence found in resume. Strength is in data-plane / throughput systems rather than ML.' },
+        { status: 'ok', name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Plaid role: <strong>"led 4-engineer pod through a ledger re-architecture"</strong>' },
+      ],
+      resume: [
+        { title: 'Senior Backend Engineer · Plaid', meta: 'Jun 2023 — Present · 2 yrs · Remote',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Owned <strong>core ledger service · sub-50ms p99 across 12B txns/yr</strong>.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Built <strong>ACH-rail integration</strong> for 7 banking partners; introduced idempotency framework org-wide.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Led a <strong>4-engineer pod</strong> through a 9-month ledger re-architecture.' },
+            { quant: true,
+              text: 'Cut on-call pages on ledger service from <strong>~18/week → 2/week</strong> via better partitioning.' },
+          ]},
+        { title: 'Backend Engineer · Modern Treasury', meta: 'Aug 2021 — May 2023 · 1 yr 10 mos · Remote',
+          bullets: [
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Built <strong>reconciliation engine</strong> for bank-rail integrations across Fed, ACH, RTP.' },
+            { match: 'distsys',
+              text: 'Designed event-sourced ledger model adopted by multiple downstream products.' },
+          ]},
+        { title: 'Software Engineer · Stripe', meta: 'Jul 2020 — Jul 2021 · 1 yr · SF',
+          bullets: [
+            { text: 'Worked on dispute-resolution backend (early-career rotation).' },
+          ]},
+      ]
+    },
+
+    12: {
+      rank: 15, tier: 'Below the line', tierClass: 'B', revealName: 'Maya Chen',
+      snapshot: {
+        years: 6,
+        mostRecent: 'Senior Backend Engineer @ Square (2 yrs)',
+        domain: { strength: 'Strong', detail: 'fintech B2B SaaS, payments-adjacent' },
+        quantCount: 4,
+      },
+      mustHaves: [
+        { status: 'ok', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Square role: <strong>"led platform migration cutting latency 60%"</strong>' },
+        { status: 'ok', name: 'Payments domain', anchor: 'payments',
+          evidence: 'Found in <strong>Square + previous Coinbase role</strong>' },
+        { status: 'miss', name: 'AI / ML experience', preferred: true,
+          none: 'No direct evidence found in resume. May be covered by adjacent ML work — worth confirming in interview.' },
+        { status: 'ok', name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Square role: <strong>"led 5-person team"</strong>' },
+      ],
+      resume: [
+        { title: 'Senior Backend Engineer · Square', meta: 'Apr 2023 — Present · 2 yrs · San Francisco, CA',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Led <strong>platform migration cutting p99 latency 60%</strong> across the payments-events service handling 80M txns/day.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Built <strong>fraud-detection pipeline</strong> for the Cash App money-movement flow — payments-adjacent ML, 35% false-positive reduction.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Led <strong>5-person team</strong> through a 6-month re-architecture; mentored two engineers through promotion.' },
+            { quant: true,
+              text: 'Owned uptime for payments-events service; raised SLO from <strong>99.9% → 99.97%</strong>.' },
+          ]},
+        { title: 'Backend Engineer · Coinbase', meta: 'Jun 2020 — Mar 2023 · 2 yrs 9 mos · Remote',
+          bullets: [
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Built <strong>settlement-reconciliation service</strong> for fiat off-ramps. Handled 12 currencies, 4 banking partners.' },
+            { quant: true,
+              text: 'Cut reconciliation processing time from <strong>4 hours → 11 min</strong> via parallelization and incremental matching.' },
+            { quant: true,
+              text: 'Owned <strong>$2B/month transaction throughput</strong> for the Coinbase Pro order-book reconciliation pipeline.' },
+          ]},
+        { title: 'Software Engineer · Twilio', meta: 'Aug 2018 — May 2020 · 1 yr 10 mos',
+          bullets: [
+            { text: 'Built messaging-routing infrastructure for SMS delivery across 180 countries.' },
+            { text: 'Contributed to internal Kafka-based event bus migration.' },
+          ]},
+      ]
+    },
   };
 
+  // -------- Render functions --------
+  function renderSnapshot(c) {
+    return `
+      <div class="section">
+        <div class="section-head"><span class="section-tag">Section A</span><h3>Snapshot</h3></div>
+        <div class="snapshot">
+          <div class="snap-cell"><div class="label">Relevant experience</div>
+            <div class="value"><strong>${c.snapshot.years}</strong> years</div></div>
+          <div class="snap-cell"><div class="label">Most recent role</div>
+            <div class="value">${c.snapshot.mostRecent}</div></div>
+          <div class="snap-cell"><div class="label">Domain match</div>
+            <div class="value"><span class="strong">${c.snapshot.domain.strength}</span> — ${c.snapshot.domain.detail}</div></div>
+          <div class="snap-cell"><div class="label">Quantified achievements</div>
+            <div class="value"><strong>${c.snapshot.quantCount} found</strong> · <a class="quant-jump" href="#" data-jump="quant">jump to resume ↓</a></div></div>
+        </div>
+      </div>
+    `;
+  }
+  function renderMustHaves(c) {
+    const rows = c.mustHaves.map(m => {
+      if (m.status === 'ok') {
+        const jump = m.anchor ? `data-jump="${m.anchor}"` : '';
+        return `
+          <div class="must-row ok" ${jump}>
+            <div class="check">✓</div>
+            <div class="body">
+              <div class="name">${m.name}</div>
+              <div class="evidence">${m.evidence}</div>
+            </div>
+            <div class="jump">↓</div>
+          </div>`;
+      }
+      // miss
+      return `
+        <div class="must-row miss">
+          <div class="check">!</div>
+          <div class="body">
+            <div class="name">${m.name}${m.preferred ? ' <span class="badge-pref">Preferred · not Required</span>' : ''}</div>
+            <div class="none">${m.none}</div>
+          </div>
+          <div class="jump"></div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="section">
+        <div class="section-head"><span class="section-tag">Section B</span><h3>Must-have checklist</h3></div>
+        <div class="must">${rows}</div>
+      </div>
+    `;
+  }
+  function renderResume(c) {
+    const jobs = c.resume.map(job => {
+      const bullets = job.bullets.map(b => {
+        const cls = b.match ? `match` : '';
+        const anchor = b.match ? `data-anchor="${b.match}"` : '';
+        const quant = b.quant ? '<span class="quant">📊</span> ' : '';
+        const tag = b.tag ? ` <span class="match-tag">${b.tag}</span>` : '';
+        return `<li class="${cls}" ${anchor}>${quant}${b.text}${tag}</li>`;
+      }).join('');
+      return `
+        <div class="resume">
+          <div class="job-head">
+            <div class="title">${job.title}</div>
+            <div class="meta">${job.meta}</div>
+          </div>
+          <ul>${bullets}</ul>
+        </div>`;
+    }).join('');
+    return `
+      <div class="section">
+        <div class="section-head"><span class="section-tag">Section C</span><h3>Resume excerpt</h3></div>
+        ${jobs}
+      </div>
+    `;
+  }
+
+  function renderBody(c) {
+    document.getElementById('dbody').innerHTML =
+      renderSnapshot(c) + renderMustHaves(c) + renderResume(c);
+  }
+
   function init() {
-    const c = CAND[candidateId] || { rank: fromRank, tier: 'Below the line', tierClass: 'B' };
+    const c = CAND[candidateId];
     document.getElementById('candIdLabel').textContent = candidateId;
+
+    if (!c) {
+      // Fallback for candidates without rich data
+      document.getElementById('rankLabel').textContent = fromRank;
+      document.getElementById('dbody').innerHTML = `
+        <div style="padding:18px 20px; background: var(--surface-2); border:1px dashed var(--border-strong); border-radius: 10px; color: var(--ink-3); font-size: 13px; line-height: 1.55;">
+          <strong style="color: var(--ink-2);">Demo profiles available for Candidates 7, 23, 41 (Tier A) and 12 (below the line).</strong>
+          Other candidates would be parsed identically; this view shows the template.
+        </div>
+      `;
+      return;
+    }
+
     document.getElementById('rankLabel').textContent = c.rank;
     const tierPill = document.getElementById('tierPill');
     tierPill.className = `tier-pill ${c.tierClass}`;
     tierPill.innerHTML = `<span class="dot"></span>${c.tier} · #${c.rank}`;
 
-    // For demo: only Candidate 12 has the rich profile. Show a soft note for others.
-    if (candidateId !== 12) {
-      const notice = document.createElement('div');
-      notice.style.cssText = 'padding:12px 16px; margin: 0 22px 14px; background: var(--surface-2); border:1px dashed var(--border-strong); border-radius: 10px; color: var(--ink-3); font-size: 12.5px;';
-      notice.innerHTML = '<strong style="color: var(--ink-2);">Demo focuses on Candidate 12.</strong> Profile data for other candidates would be parsed identically; this view shows the template.';
-      document.querySelector('.dbody').prepend(notice);
-    }
+    renderBody(c);
   }
   init();
 
