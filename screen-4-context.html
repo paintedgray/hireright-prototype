@@ -208,7 +208,25 @@
   }
   .snap-cell .value .quant-jump:hover { text-decoration: underline; }
 
-  /* Section B — must-have checklist */
+  /* Section B — criteria match (gates + preferred sub-sections) */
+  .sub-head {
+    margin-top: 12px; margin-bottom: 6px;
+    display: flex; align-items: baseline; gap: 8px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--ink-3);
+  }
+  .sub-head:first-child { margin-top: 0; }
+  .sub-meta {
+    font-weight: 500; text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--ink-4);
+  }
+  .weight-badge {
+    display: inline-block; margin-left: 6px;
+    padding: 1px 7px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 500; color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    vertical-align: middle;
+  }
   .must {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); overflow: hidden;
@@ -424,13 +442,13 @@
         quantCount: 5,
       },
       mustHaves: [
-        { status: 'ok', name: 'Distributed systems experience', anchor: 'distsys',
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Stripe role: <strong>"led infra migration lifting throughput 40%"</strong>' },
-        { status: 'ok', name: 'Payments domain', anchor: 'payments',
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Stripe core payments + prior Robinhood and Affirm roles</strong>' },
-        { status: 'ok', name: 'AI / ML experience', anchor: 'ml', preferred: true,
+        { status: 'ok', type: 'preferred', weight: 3, name: 'AI / ML experience', anchor: 'ml',
           evidence: 'Contributor to Stripe Radar — <strong>fraud-detection rule pipeline</strong>' },
-        { status: 'ok', name: 'Team leadership', anchor: 'leadership',
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
           evidence: 'Found in Stripe role: <strong>"tech-lead pod of 7; promoted 2 ICs"</strong>' },
       ],
       resume: [
@@ -468,13 +486,13 @@
         quantCount: 6,
       },
       mustHaves: [
-        { status: 'ok', name: 'Distributed systems experience', anchor: 'distsys',
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Square role: <strong>"fraud-scoring service at 200M evals/day"</strong>' },
-        { status: 'ok', name: 'Payments domain', anchor: 'payments',
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Square fraud + prior Visa risk-analytics role</strong>' },
-        { status: 'ok', name: 'AI / ML experience', anchor: 'ml', preferred: true,
+        { status: 'ok', type: 'preferred', weight: 3, name: 'AI / ML experience', anchor: 'ml',
           evidence: 'Owned <strong>ML feature-store and online inference</strong> for fraud scoring at Square.' },
-        { status: 'ok', name: 'Team leadership', anchor: 'leadership',
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
           evidence: 'Found in Square role: <strong>"mentored 4 engineers; led architecture for fraud platform"</strong>' },
       ],
       resume: [
@@ -514,13 +532,13 @@
         quantCount: 4,
       },
       mustHaves: [
-        { status: 'ok', name: 'Distributed systems experience', anchor: 'distsys',
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Plaid role: <strong>"core ledger service · sub-50ms p99 across 12B txns/yr"</strong>' },
-        { status: 'ok', name: 'Payments domain', anchor: 'payments',
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Plaid bank-rails + prior Modern Treasury role</strong>' },
-        { status: 'miss', name: 'AI / ML experience', preferred: true,
+        { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
           none: 'No direct evidence found in resume. Strength is in data-plane / throughput systems rather than ML.' },
-        { status: 'ok', name: 'Team leadership', anchor: 'leadership',
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
           evidence: 'Found in Plaid role: <strong>"led 4-engineer pod through a ledger re-architecture"</strong>' },
       ],
       resume: [
@@ -558,13 +576,13 @@
         quantCount: 4,
       },
       mustHaves: [
-        { status: 'ok', name: 'Distributed systems experience', anchor: 'distsys',
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Square role: <strong>"led platform migration cutting latency 60%"</strong>' },
-        { status: 'ok', name: 'Payments domain', anchor: 'payments',
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Found in <strong>Square + previous Coinbase role</strong>' },
-        { status: 'miss', name: 'AI / ML experience', preferred: true,
+        { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
           none: 'No direct evidence found in resume. May be covered by adjacent ML work — worth confirming in interview.' },
-        { status: 'ok', name: 'Team leadership', anchor: 'leadership',
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
           evidence: 'Found in Square role: <strong>"led 5-person team"</strong>' },
       ],
       resume: [
@@ -615,35 +633,51 @@
       </div>
     `;
   }
-  function renderMustHaves(c) {
-    const rows = c.mustHaves.map(m => {
-      if (m.status === 'ok') {
-        const jump = m.anchor ? `data-jump="${m.anchor}"` : '';
-        return `
-          <div class="must-row ok" ${jump}>
-            <div class="check">✓</div>
-            <div class="body">
-              <div class="name">${m.name}</div>
-              <div class="evidence">${m.evidence}</div>
-            </div>
-            <div class="jump">↓</div>
-          </div>`;
-      }
-      // miss
+  function renderMustHaveRow(m) {
+    if (m.status === 'ok') {
+      const jump = m.anchor ? `data-jump="${m.anchor}"` : '';
+      const weight = m.type === 'preferred' ? ` <span class="weight-badge">w${m.weight}</span>` : '';
       return `
-        <div class="must-row miss">
-          <div class="check">!</div>
+        <div class="must-row ok" ${jump}>
+          <div class="check">✓</div>
           <div class="body">
-            <div class="name">${m.name}${m.preferred ? ' <span class="badge-pref">Preferred · not Required</span>' : ''}</div>
-            <div class="none">${m.none}</div>
+            <div class="name">${m.name}${weight}</div>
+            <div class="evidence">${m.evidence}</div>
           </div>
-          <div class="jump"></div>
+          <div class="jump">↓</div>
         </div>`;
-    }).join('');
+    }
+    // miss
+    const weight = m.type === 'preferred' ? ` <span class="weight-badge">w${m.weight}</span>` : '';
+    return `
+      <div class="must-row miss">
+        <div class="check">!</div>
+        <div class="body">
+          <div class="name">${m.name}${weight}</div>
+          <div class="none">${m.none}</div>
+        </div>
+        <div class="jump"></div>
+      </div>`;
+  }
+  function renderMustHaves(c) {
+    const gates     = c.mustHaves.filter(m => m.type === 'gate');
+    const preferred = c.mustHaves.filter(m => m.type === 'preferred');
+    const gatesHtml = gates.length
+      ? `
+        <div class="sub-head">Gates <span class="sub-meta">must pass · pass / fail</span></div>
+        <div class="must">${gates.map(renderMustHaveRow).join('')}</div>`
+      : '';
+    const prefMissing = preferred.filter(m => m.status !== 'ok').length;
+    const prefHtml = preferred.length
+      ? `
+        <div class="sub-head">Preferred <span class="sub-meta">weighted · ${preferred.length - prefMissing} of ${preferred.length} matched</span></div>
+        <div class="must">${preferred.map(renderMustHaveRow).join('')}</div>`
+      : '';
     return `
       <div class="section">
-        <div class="section-head"><span class="section-tag">Section B</span><h3>Must-have checklist</h3></div>
-        <div class="must">${rows}</div>
+        <div class="section-head"><span class="section-tag">Section B</span><h3>Criteria match</h3></div>
+        ${gatesHtml}
+        ${prefHtml}
       </div>
     `;
   }
