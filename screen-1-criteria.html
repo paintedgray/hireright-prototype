@@ -244,55 +244,6 @@
   }
   .add-row input[type=text]:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(14,107,107,0.12); }
 
-  /* Custom signals */
-  .signals { display: grid; grid-template-columns: 1fr; gap: 0; }
-  .signal-row {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr auto;
-    gap: 16px;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border);
-    align-items: center;
-  }
-  .signal-row:last-child { border-bottom: none; }
-  .signal-row .label { font-weight: 500; }
-  .signal-row .desc { font-size: 12px; color: var(--ink-3); margin-top: 2px; display: block; }
-  .signal-row .rationale {
-    margin-top: 6px; font-size: 12px; color: var(--ink-3);
-    font-style: italic; line-height: 1.45;
-    border-left: 2px solid var(--border-strong); padding-left: 10px;
-  }
-  .signal-control { display: flex; align-items: center; gap: 12px; }
-  .signal-control input[type=range] { flex: 1; }
-  .signal-value {
-    font-weight: 600; min-width: 40px; text-align: right; font-variant-numeric: tabular-nums; font-size: 13px;
-  }
-
-  /* Decay curve mini graphic */
-  .decay-chart {
-    width: 100%; height: 36px; margin-top: 8px;
-  }
-  .decay-chart path.fill { fill: rgba(14,107,107,0.10); }
-  .decay-chart path.line { fill: none; stroke: var(--brand); stroke-width: 1.5; }
-  .decay-chart .floor-line { stroke: var(--ink-4); stroke-dasharray: 3 3; stroke-width: 1; }
-  .decay-chart .floor-label { font-size: 9px; fill: var(--ink-3); }
-
-  /* Toggle */
-  .toggle {
-    position: relative; display: inline-block; width: 36px; height: 20px;
-  }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle .slider {
-    position: absolute; cursor: pointer; inset: 0;
-    background: #cbd5e1; transition: .15s; border-radius: 999px;
-  }
-  .toggle .slider::before {
-    position: absolute; content: ""; height: 14px; width: 14px; left: 3px; top: 3px;
-    background: white; transition: .15s; border-radius: 50%;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-  }
-  .toggle input:checked + .slider { background: var(--brand); }
-  .toggle input:checked + .slider::before { transform: translateX(16px); }
 
   /* ------- Right pane: stress test ------- */
   .stress-head {
@@ -504,65 +455,6 @@
         </div>
       </div>
 
-      <!-- Section 3: Signal tuning -->
-      <div class="section muted">
-        <div class="section-head">
-          <div class="row">
-            <span class="tag">Section 3</span>
-            <h2>Signal tuning</h2>
-          </div>
-          <div class="subhead">How the model weighs different kinds of evidence. Independent of role criteria.</div>
-        </div>
-        <div class="section-body signals">
-
-          <div class="signal-row">
-            <div>
-              <div class="label">Internal-employee similarity weight</div>
-              <div class="rationale">Higher = bias toward existing team patterns. Lower = better for novel or diversifying roles.</div>
-            </div>
-            <div class="signal-control">
-              <input type="range" id="simSlider" min="0" max="10" value="6" />
-              <span class="signal-value" id="simVal">6 / 10</span>
-            </div>
-            <label class="toggle" data-tooltip="On / off">
-              <input type="checkbox" id="simToggle" checked />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="signal-row">
-            <div>
-              <div class="label">Recency-decay floor</div>
-              <div class="rationale">Floor prevents older skills from dropping to zero. Aggressive decay correlates with age-disparate impact.</div>
-              <svg class="decay-chart" id="decayChart" viewBox="0 0 240 36" preserveAspectRatio="none" aria-hidden="true">
-                <path class="fill" id="decayFill"></path>
-                <path class="line" id="decayLine"></path>
-                <line class="floor-line" id="floorLine" x1="0" x2="240" y1="0" y2="0"></line>
-                <text class="floor-label" id="floorLabel" x="232" y="0" text-anchor="end">floor</text>
-              </svg>
-            </div>
-            <div class="signal-control">
-              <input type="range" id="decaySlider" min="0" max="100" value="30" />
-              <span class="signal-value" id="decayVal">30%</span>
-            </div>
-            <span></span>
-          </div>
-
-          <div class="signal-row">
-            <div>
-              <div class="label">Quantified achievement weight</div>
-              <div class="rationale">Boosts candidates with measurable outcomes. Default high for senior roles.</div>
-            </div>
-            <div class="signal-control">
-              <input type="range" id="quantSlider" min="0" max="10" value="8" />
-              <span class="signal-value" id="quantVal">8 / 10</span>
-            </div>
-            <span></span>
-          </div>
-
-        </div>
-      </div>
-
       <!-- Demo cue -->
       <div class="demo-cue">
         <span>🎬</span>
@@ -605,28 +497,7 @@
       // Soft-block proxy criterion — needed for the demo flag to fire.
       { id: 'p3', text: 'Graduated from top-20 university', weight: 2, softBlockId: 'sb-tier' },
     ],
-    signals: { sim: 6, simOn: true, decay: 30, quant: 8 },
     flags: [
-      {
-        id: 'sf-decay',
-        sev: 'warn',
-        title: 'Recency-decay floor at 30% may correlate with age-disparate impact',
-        desc: 'Recency-decay floor at 30% correlates with age-disparate impact in your last 12 months of hires.',
-        rec: 'Recommended floor: ≥ 50%.',
-        condition: () => state.signals.decay < 50,
-        actions: ['ack', 'adjust:decay'],
-        resolved: false,
-      },
-      {
-        id: 'sf-sim',
-        sev: 'warn',
-        title: 'Internal-similarity weight may amplify existing team demographics',
-        desc: 'Internal-employee similarity = 6 may amplify existing team demographics on a role with limited current diversity.',
-        rec: 'Consider 3–4.',
-        condition: () => state.signals.simOn && state.signals.sim >= 5,
-        actions: ['ack', 'adjust:sim'],
-        resolved: false,
-      },
       {
         id: 'sb-tier',
         sev: 'block',
@@ -790,8 +661,6 @@
   function renderActions(f) {
     const map = {
       'ack': '<button class="btn" data-action="ack">Acknowledge</button>',
-      'adjust:decay': '<button class="btn" data-action="adjust:decay">Adjust to 50%</button>',
-      'adjust:sim': '<button class="btn" data-action="adjust:sim">Adjust to 4</button>',
       'justify': '<button class="btn" data-action="justify">Document justification</button>',
       'remove:sb-tier': '<button class="btn" data-action="remove:sb-tier">Remove criterion</button>',
       'remove:hb-gap': '<button class="btn primary" data-action="remove:hb-gap">Remove criterion</button>',
@@ -809,34 +678,6 @@
         notes: '',
       });
       renderFlags();
-      return;
-    }
-    if (action === 'adjust:decay') {
-      state.signals.decay = 50;
-      document.getElementById('decaySlider').value = 50;
-      updateSignalUI();
-      f.resolved = true;
-      pushLogEntry({
-        kind: 'ack', label: 'Adjusted per recommendation',
-        target: 'Recency-decay floor', targetType: 'flag',
-        reasonLabel: 'Auto-adjusted to recommended ≥ 50% floor',
-        notes: 'Soft flag resolved by accepting system recommendation.',
-      });
-      renderAll();
-      return;
-    }
-    if (action === 'adjust:sim') {
-      state.signals.sim = 4;
-      document.getElementById('simSlider').value = 4;
-      updateSignalUI();
-      f.resolved = true;
-      pushLogEntry({
-        kind: 'ack', label: 'Adjusted per recommendation',
-        target: 'Internal-similarity weight', targetType: 'flag',
-        reasonLabel: 'Auto-adjusted to recommended 3–4 range',
-        notes: 'Soft flag resolved by accepting system recommendation.',
-      });
-      renderAll();
       return;
     }
     if (action === 'justify') {
@@ -894,68 +735,7 @@
     }
   }
 
-  // -------- Signal sliders --------
-  function updateSignalUI() {
-    const sim = state.signals.sim;
-    const decay = state.signals.decay;
-    const quant = state.signals.quant;
-
-    document.getElementById('simVal').textContent = `${sim} / 10`;
-    document.getElementById('decayVal').textContent = `${decay}%`;
-    document.getElementById('quantVal').textContent = `${quant} / 10`;
-
-    document.getElementById('simSlider').style.setProperty('--p', (sim / 10 * 100) + '%');
-    document.getElementById('decaySlider').style.setProperty('--p', decay + '%');
-    document.getElementById('quantSlider').style.setProperty('--p', (quant / 10 * 100) + '%');
-
-    // disable sim slider if off
-    document.getElementById('simSlider').disabled = !state.signals.simOn;
-
-    drawDecayCurve(decay);
-  }
-
-  function drawDecayCurve(floorPct) {
-    const w = 240, h = 36;
-    const floorY = h - (floorPct / 100) * (h - 4) - 2;
-    // exponential decay y(x) = (1 - floor) * exp(-2 * x/w) + floor   (in fraction of full height)
-    const pts = [];
-    for (let x = 0; x <= w; x += 4) {
-      const t = x / w;
-      const yFrac = (1 - floorPct/100) * Math.exp(-2.4 * t) + floorPct/100;
-      const y = h - yFrac * (h - 4) - 2;
-      pts.push([x, y]);
-    }
-    const linePath = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
-    const fillPath = linePath + ` L ${w} ${h} L 0 ${h} Z`;
-    document.getElementById('decayLine').setAttribute('d', linePath);
-    document.getElementById('decayFill').setAttribute('d', fillPath);
-    const fl = document.getElementById('floorLine');
-    fl.setAttribute('y1', floorY); fl.setAttribute('y2', floorY);
-    const flLabel = document.getElementById('floorLabel');
-    flLabel.setAttribute('y', Math.max(8, floorY - 2));
-    flLabel.textContent = `floor ${floorPct}%`;
-  }
-
-  // wire sliders
-  ['simSlider', 'decaySlider', 'quantSlider'].forEach(id => {
-    document.getElementById(id).addEventListener('input', e => {
-      const v = parseInt(e.target.value, 10);
-      if (id === 'simSlider') state.signals.sim = v;
-      if (id === 'decaySlider') state.signals.decay = v;
-      if (id === 'quantSlider') state.signals.quant = v;
-      updateSignalUI();
-      // un-resolve relevant warn flags so live re-eval feels right
-      if (id === 'decaySlider') state.flags.find(f => f.id === 'sf-decay').resolved = false;
-      if (id === 'simSlider')   state.flags.find(f => f.id === 'sf-sim').resolved = false;
-      renderFlags();
-    });
-  });
-  document.getElementById('simToggle').addEventListener('change', e => {
-    state.signals.simOn = e.target.checked;
-    updateSignalUI();
-    state.flags.find(f => f.id === 'sf-sim').resolved = false;
-    renderFlags();
-  });
+  // Signal-tuning UI removed — model behavior is role-template defaulted (see .role-context).
 
   // -------- Add criterion (two separate inputs) --------
   function wireAdd(btnId, inpId, target) {
@@ -1052,13 +832,12 @@
   function summarizeCriteriaForLog() {
     const gateNames = state.gates.map(g => g.text).join(', ') || '—';
     const prefNames = state.preferred.map(p => `${p.text} (w${p.weight})`).join(', ') || '—';
-    const sig = state.signals;
     const justifications = Object.entries(state.justifications || {})
       .map(([id, txt]) => `[${id}] ${txt}`).join(' · ');
     return [
       `Gates: ${gateNames}`,
       `Preferred: ${prefNames}`,
-      `Signal tuning: similarity=${sig.simOn ? sig.sim : 'off'} · recency floor=${sig.decay}% · quantified=${sig.quant}`,
+      `Role evaluation defaults: vendor-managed (recency floor high · quantified prioritized · similarity off)`,
       justifications ? `Justifications: ${justifications}` : '',
     ].filter(Boolean).join('\n');
   }
@@ -1080,7 +859,6 @@
   }
 
   // init
-  updateSignalUI();
   renderAll();
 </script>
 </body>
