@@ -327,9 +327,7 @@
     <div class="stepper" id="stepper">
       <div class="step active" data-s="1"><span class="num">1</span><span class="label">Reason</span></div>
       <span class="arrow">›</span>
-      <div class="step" data-s="2"><span class="num">2</span><span class="label">Detail</span></div>
-      <span class="arrow">›</span>
-      <div class="step" data-s="3"><span class="num">3</span><span class="label">Notes (optional)</span></div>
+      <div class="step" data-s="2"><span class="num">2</span><span class="label">Notes (optional)</span></div>
     </div>
 
     <!-- Body -->
@@ -338,26 +336,16 @@
       <!-- Step 1 -->
       <div class="step-block" id="step1">
         <div class="step-head">
-          <span class="tag">Step 1 of 3</span>
+          <span class="tag">Step 1 of 2</span>
           <h3 id="step1Question">Why are you promoting this candidate?</h3>
         </div>
         <div class="opts" id="reasonOpts"></div>
       </div>
 
-      <!-- Step 2 -->
-      <div class="step-block hidden" id="step2">
-        <div class="step-head">
-          <span class="tag">Step 2 of 3</span>
-          <h3>Reason detail</h3>
-          <span class="auto-suggest"><span class="spark">✨</span> Auto-suggested from candidate context</span>
-        </div>
-        <div class="opts" id="detailOpts"></div>
-      </div>
-
-      <!-- Step 3 -->
+      <!-- Step 2 — Notes (was Step 3) -->
       <div class="step-block hidden" id="step3">
         <div class="step-head">
-          <span class="tag">Step 3 of 3</span>
+          <span class="tag">Step 2 of 2</span>
           <h3>Optional notes</h3>
         </div>
         <div class="notes-wrap">
@@ -373,13 +361,7 @@
 
     <!-- Footer -->
     <footer class="mfoot">
-      <div class="pattern" id="patternBlock">
-        <div class="ico">📊</div>
-        <div class="text" id="patternText">
-          <strong>3rd</strong> “Domain depth” override on this role family. After 2 more, the criteria-refinement nudge will surface.
-        </div>
-      </div>
-      <div class="right">
+      <div class="right" style="margin-left:auto;">
         <button class="btn" id="cancelBtn">Cancel</button>
         <button class="btn primary" id="submitBtn" disabled>Submit override</button>
       </div>
@@ -560,13 +542,8 @@
   // Pick the active reason set based on the action this modal is capturing
   const REASONS = REASON_SETS[action] || REASON_SETS.promote;
 
-  // -------- Patterns (mock — would come from the audit log) --------
-  // Prior counts per reason key. Only the promote/Domain demo case fires the nudge in the demo.
-  const PRIOR_COUNTS = { domain: 2, metrics: 0, musthave: 1, senior: 0, other: 0 };
-
-  // -------- Demo defaults (per spec): pre-select reason if promoting Candidate 12 --------
+  // -------- Demo defaults: pre-select reason if promoting Candidate 12 --------
   let selectedReason = null;
-  let selectedDetail = null;
 
   // -------- Render Step 1 --------
   const reasonOpts = document.getElementById('reasonOpts');
@@ -585,110 +562,31 @@
     reasonOpts.appendChild(card);
   });
 
-  // -------- Render Step 2 (called when Step 1 selected) --------
-  function renderDetails(reasonKey) {
-    const detailOpts = document.getElementById('detailOpts');
-    detailOpts.innerHTML = '';
-    const r = REASONS[reasonKey];
-    if (!r.details) {
-      detailOpts.innerHTML = `
-        <div style="padding: 14px; background: var(--surface-2); border: 1px dashed var(--border); border-radius: 8px; color: var(--ink-3); font-size: 13px;">
-          No sub-categories for this reason. Continue to Step 3 to capture details in notes.
-        </div>
-      `;
-      // Auto-advance past Step 2
-      selectedDetail = 'other-freetext';
-      enableStep(3);
-      updateSubmit();
-      return;
-    }
-    r.details.forEach(d => {
-      const card = document.createElement('div');
-      card.className = 'opt' + (d.suggested ? ' suggested' : '');
-      card.dataset.id = d.id;
-      const pill = d.suggested ? '<span class="suggest-pill">✨ Suggested</span>' : '';
-      card.innerHTML = `
-        <div class="radio"></div>
-        <div class="body">
-          <div class="label">${d.label}${pill}</div>
-        </div>
-      `;
-      card.addEventListener('click', () => selectDetail(d.id));
-      detailOpts.appendChild(card);
-    });
-
-    // Auto-select the suggested detail
-    const suggested = r.details.find(d => d.suggested);
-    if (suggested) selectDetail(suggested.id, { silent: true });
-  }
-
-  // -------- Selection handlers --------
+  // -------- Selection handler --------
   function selectReason(key) {
     selectedReason = key;
-    selectedDetail = null;
     document.querySelectorAll('#reasonOpts .opt').forEach(c => {
       c.classList.toggle('selected', c.dataset.key === key);
     });
-    enableStep(2);
-    renderDetails(key);
-    updatePattern();
-    updateSubmit();
-  }
-
-  function selectDetail(id, opts = {}) {
-    selectedDetail = id;
-    document.querySelectorAll('#detailOpts .opt').forEach(c => {
-      c.classList.toggle('selected', c.dataset.id === id);
-    });
-    enableStep(3);
-    updateSubmit();
-  }
-
-  function enableStep(n) {
-    document.querySelectorAll('.step-block').forEach((b, i) => {
-      const num = i + 1;
-      if (num <= n) b.classList.remove('hidden');
-    });
-    // Stepper visual state
+    // Reveal notes step + update stepper
+    document.getElementById('step3').classList.remove('hidden');
     document.querySelectorAll('#stepper .step').forEach(el => {
       const s = parseInt(el.dataset.s, 10);
       el.classList.remove('active', 'done');
-      if (s < n)  el.classList.add('done');
-      if (s === n) el.classList.add('active');
+      if (s === 1) el.classList.add('done');
+      if (s === 2) el.classList.add('active');
     });
-  }
-
-  function updatePattern() {
-    const block = document.getElementById('patternBlock');
-    const text  = document.getElementById('patternText');
-    if (!selectedReason) return;
-    const r = REASONS[selectedReason];
-    const prior = PRIOR_COUNTS[selectedReason] || 0;
-    const thisCount = prior + 1; // including this one
-    const remaining = Math.max(0, 5 - thisCount);
-    const ordinal = ['', '1st', '2nd', '3rd', '4th', '5th'][thisCount] || `${thisCount}th`;
-    if (thisCount >= 5) {
-      block.classList.add('fired');
-      text.innerHTML = `<strong>5th</strong> “${r.patternKey}” override — criteria-refinement nudge will fire after submit.`;
-    } else {
-      block.classList.remove('fired');
-      const tail = remaining === 1
-        ? 'After 1 more, the criteria-refinement nudge will surface.'
-        : `After ${remaining} more, the criteria-refinement nudge will surface.`;
-      text.innerHTML = `<strong>${ordinal}</strong> “${r.patternKey}” override on this role family. ${tail}`;
-    }
+    updateSubmit();
   }
 
   function updateSubmit() {
-    const ok = selectedReason && selectedDetail;
-    document.getElementById('submitBtn').disabled = !ok;
+    document.getElementById('submitBtn').disabled = !selectedReason;
   }
 
-  // -------- Demo pre-fill: per spec, Candidate 12 + promote → preselect Domain depth + suggested detail + notes --------
+  // -------- Demo pre-fill: per spec, Candidate 12 + promote → preselect Domain depth + notes --------
   function applyDemoDefaults() {
     if (action === 'promote' && candidateId === '12') {
-      selectReason('domain');                       // Step 1 auto-selected
-      // Step 2 suggested is auto-selected inside selectReason
+      selectReason('domain');
       document.getElementById('notesInput').value =
         'Built fraud detection at Square — payments-adjacent ML, model didn\'t recognize';
     }
@@ -718,7 +616,6 @@
 
     // Persist override
     const s = loadState();
-    const detailObj = (REASONS[selectedReason]?.details || []).find(d => d.id === selectedDetail);
     s.overrides.push({
       candidate: parseInt(candidateId, 10),
       action,
@@ -727,8 +624,6 @@
       reason: selectedReason,
       reasonLabel: REASONS[selectedReason]?.label,
       reasonKey: REASONS[selectedReason]?.patternKey,
-      detail: selectedDetail,
-      detailLabel: detailObj?.label || (selectedDetail === 'other-freetext' ? 'See notes' : ''),
       notes: document.getElementById('notesInput').value.trim(),
       ts: Date.now(),
     });
