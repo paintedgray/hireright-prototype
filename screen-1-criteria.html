@@ -498,7 +498,7 @@
   // -------- State --------
   const state = {
     gates: [
-      { id: 'g1', text: '5+ years backend engineering' },
+      { id: 'g1', text: '10+ years senior backend engineering' },
       { id: 'g2', text: 'Distributed systems production experience' },
     ],
     preferred: [
@@ -508,6 +508,16 @@
       { id: 'p3', text: 'Graduated from top-20 university', weight: 2, softBlockId: 'sb-tier' },
     ],
     flags: [
+      {
+        id: 'sf-years',
+        sev: 'warn',
+        title: 'High years-of-experience requirement may correlate with age',
+        desc: 'Gate "10+ years senior backend engineering" — high years thresholds correlate with age-disparate impact in tech hiring.',
+        rec: 'Consider lowering to 8+ unless deep seniority is the explicit ask.',
+        condition: () => allCriteria().some(c => /\b1[0-9]\+?\s*years/i.test(c.text)),
+        actions: ['ack', 'adjust:years'],
+        resolved: false,
+      },
       {
         id: 'sb-tier',
         sev: 'block',
@@ -671,6 +681,7 @@
   function renderActions(f) {
     const map = {
       'ack': '<button class="btn" data-action="ack">Acknowledge</button>',
+      'adjust:years': '<button class="btn" data-action="adjust:years">Lower to 8+ years</button>',
       'justify': '<button class="btn" data-action="justify">Document justification</button>',
       'remove:sb-tier': '<button class="btn" data-action="remove:sb-tier">Remove criterion</button>',
       'remove:hb-gap': '<button class="btn primary" data-action="remove:hb-gap">Remove criterion</button>',
@@ -688,6 +699,22 @@
         notes: '',
       });
       renderFlags();
+      return;
+    }
+    if (action === 'adjust:years') {
+      const updateText = (arr) => arr.forEach(c => {
+        c.text = c.text.replace(/\b1[0-9]\+?\s*years/i, '8+ years');
+      });
+      updateText(state.gates);
+      updateText(state.preferred);
+      f.resolved = true;
+      pushLogEntry({
+        kind: 'ack', label: 'Adjusted per recommendation',
+        target: 'Years-of-experience requirement', targetType: 'flag',
+        reasonLabel: 'Lowered years threshold to 8+ as recommended',
+        notes: 'Soft flag resolved by accepting system recommendation.',
+      });
+      renderAll();
       return;
     }
     if (action === 'justify') {
