@@ -85,6 +85,16 @@
   }
   .chip.draft { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
   .chip.active { background: var(--ok-bg); color: var(--ok); border-color: var(--ok-border); }
+  /* After-save button transformation */
+  .btn.view-shortlist {
+    background: var(--brand); border-color: var(--brand); color: #fff;
+    animation: slidePulse 0.5s ease;
+  }
+  @keyframes slidePulse {
+    0%   { transform: scale(0.96); }
+    60%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
   .chip.role { background: var(--brand-soft); color: var(--brand-ink); border-color: #bfe1e1; }
   .chip.flash { animation: chipFlash 0.6s ease; }
   @keyframes chipFlash {
@@ -790,9 +800,17 @@
     setTimeout(() => t.classList.remove('show'), 2400);
   }
 
+  let isSaved = false;
+
   document.getElementById('saveBtn').addEventListener('click', () => {
     const btn = document.getElementById('saveBtn');
     if (btn.disabled) return;
+
+    // Second click after save → navigate to Screen 2
+    if (isSaved) {
+      window.location.href = 'screen-2-ranked.html';
+      return;
+    }
 
     // 1. Flip status chip Draft → Active
     const chip = document.getElementById('statusChip');
@@ -800,7 +818,7 @@
     chip.classList.add('active', 'flash');
     chip.textContent = '● Active';
 
-    // 2. Lock the save button to avoid double-clicks
+    // 2. Lock the save button briefly to avoid double-clicks
     btn.disabled = true;
     btn.textContent = 'Saving…';
 
@@ -820,13 +838,19 @@
       notes: summarizeCriteriaForLog(),
     });
 
-    // 4. Toast confirmation
-    showToast(`Criteria saved · v${newV} · audit log updated`);
+    // 4. Toast — role is now active, shortlist generated against criteria
+    showToast(`Criteria saved · v${newV} · role is now active`);
 
-    // 5. Navigate to Screen 2 after a brief beat
+    // 5. After a brief beat, transform Save → View shortlist
     setTimeout(() => {
-      window.location.href = 'screen-2-ranked.html';
-    }, 900);
+      isSaved = true;
+      btn.disabled = false;
+      btn.textContent = 'View shortlist →';
+      btn.classList.add('view-shortlist');
+      // Hide Cancel — no longer meaningful after save
+      const cancel = document.getElementById('cancelBtn');
+      if (cancel) cancel.style.display = 'none';
+    }, 700);
   });
 
   function summarizeCriteriaForLog() {
