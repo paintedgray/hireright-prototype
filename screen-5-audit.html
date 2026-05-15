@@ -433,32 +433,10 @@
     const t = new Date(); t.setDate(t.getDate() - d); t.setHours(h, m, 0, 0); return t.getTime();
   }
 
-  const baseline = [
-    // No "today" baseline — today's entries come from the user's session actions
-    // (saves, flag acks, overrides, shortlist hand-off). Reset clears all of them.
-
-    // ---- Yesterday ----
-    { ts: daysAgoAt(1, 17, 30), recruiter: 'Sara Park', kind: 'save', label: 'Saved criteria',
-      target: 'Criteria v2', targetType: 'criteria',
-      reasonLabel: 'Adjusted Preferred weights based on first batch review',
-      notes: 'Increased "Team leadership" weight from 2 → 3 after seeing the role expand to include mentorship.',
-      change: 'v1 → v2' },
-    { ts: daysAgoAt(1, 16, 45), recruiter: 'Sara Park', kind: 'promote', label: 'Promoted',
-      target: 'Candidate 23', targetType: 'candidate', from: 5, to: 2,
-      reasonKey: 'domain', reasonLabel: 'Domain depth not captured in resume scoring',
-      notes: 'Payments-team work at Square — ML model surfaced this as adjacent rather than direct.' },
-    { ts: daysAgoAt(1, 15, 20), recruiter: 'Sara Park', kind: 'demote', label: 'Demoted',
-      target: 'Candidate 5', targetType: 'candidate', from: 2, to: 14,
-      reasonKey: 'senior', reasonLabel: 'Senior-level pattern not visible to keyword extraction',
-      notes: 'Title says Staff but career trajectory and signals read more IC4.' },
-
-    // ---- Earlier in the week ----
-    { ts: daysAgoAt(3, 10, 15), recruiter: 'Sara Park', kind: 'save', label: 'Saved criteria',
-      target: 'Criteria v1', targetType: 'criteria',
-      reasonLabel: 'Initial role criteria saved',
-      notes: 'Role created. Initial must-haves and preferred weights set after HM intake call.',
-      change: 'created' },
-  ];
+  // No hardcoded baseline — the log starts empty.
+  // All entries come from user actions (Screen 1 saves / flag acks, Screen 3 overrides,
+  // Screen 2 shortlist hand-off). Reset demo clears all of them.
+  const baseline = [];
 
   // -------- Map session overrides → log entries --------
   function fromOverride(o) {
