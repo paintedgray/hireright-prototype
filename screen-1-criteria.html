@@ -641,6 +641,24 @@
     justifications: {},
   };
 
+  // -------- Restore persisted criteria state (if any) --------
+  // After Save, the criteria + resolved-flag state is stored in localStorage so
+  // navigating back from Screen 2 doesn't reset the work. Reset Demo clears it.
+  try {
+    const saved = JSON.parse(localStorage.getItem('srOverrides') || '{}');
+    if (saved && saved.criteria) {
+      if (Array.isArray(saved.criteria.gates))     state.gates = saved.criteria.gates;
+      if (Array.isArray(saved.criteria.preferred)) state.preferred = saved.criteria.preferred;
+      if (saved.criteria.justifications)           state.justifications = saved.criteria.justifications;
+      if (Array.isArray(saved.criteria.resolvedFlags)) {
+        saved.criteria.resolvedFlags.forEach(id => {
+          const f = state.flags.find(x => x.id === id);
+          if (f) f.resolved = true;
+        });
+      }
+    }
+  } catch (e) { /* ignore — fall back to initial defaults */ }
+
   // -------- Render: gates + preferred --------
   function allCriteria() { return [...state.gates, ...state.preferred]; }
 
@@ -1004,11 +1022,17 @@
     btn.disabled = true;
     btn.textContent = 'Saving…';
 
-    // 3. Write to audit log
+    // 3. Write to audit log + persist criteria state (survives navigation, cleared by Reset Demo)
     const s = loadAuditState();
     const oldV = s.critVersion || 3;
     const newV = oldV + 1;
     s.critVersion = newV;
+    s.criteria = {
+      gates: state.gates,
+      preferred: state.preferred,
+      justifications: state.justifications,
+      resolvedFlags: state.flags.filter(f => f.resolved).map(f => f.id),
+    };
     saveAuditState(s);
     pushLogEntry({
       kind: 'save',
