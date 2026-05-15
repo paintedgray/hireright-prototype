@@ -75,7 +75,8 @@
     position: sticky; top: 0; z-index: 5;
   }
   .header-top { display: flex; align-items: center; gap: 14px; padding-bottom: 10px; }
-  .title-line { display: inline-flex; align-items: center; gap: 10px; }
+  .title-line { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+  .title-line .title { overflow: hidden; text-overflow: ellipsis; }
   .title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
   .chip {
     display: inline-flex; align-items: center; gap: 6px;
@@ -431,32 +432,8 @@
   }
 
   const baseline = [
-    // ---- Today ----
-    { ts: todayAt(14, 17), recruiter: 'Sara Park', kind: 'save', label: 'Saved criteria',
-      target: 'Criteria v3', targetType: 'criteria',
-      reasonLabel: 'Justified soft block on recency floor',
-      notes: 'Required for ML stack rotation — older skill base for foundational systems work.',
-      change: 'v2 → v3' },
-    { ts: todayAt(13, 55), recruiter: 'Sara Park', kind: 'ack', label: 'Acknowledged soft flag',
-      target: 'Recency-decay floor', targetType: 'flag',
-      reasonLabel: 'Reviewed and accepted role-template default',
-      notes: '' },
-    { ts: todayAt(13, 48), recruiter: 'Sara Park', kind: 'demote', label: 'Demoted',
-      target: 'Candidate 7', targetType: 'candidate', from: 3, to: 11,
-      reasonKey: 'senior', reasonLabel: 'Senior-level pattern not visible to keyword extraction',
-      notes: 'Strong on paper, weak on ownership signal during reference check.' },
-    { ts: todayAt(13, 30), recruiter: 'Sara Park', kind: 'promote', label: 'Promoted',
-      target: 'Candidate 41', targetType: 'candidate', from: 8, to: 3,
-      reasonKey: 'domain', reasonLabel: 'Domain depth not captured in resume scoring',
-      notes: 'Built core ledger at Plaid — payments infra ownership not surfaced by keyword extraction.' },
-    { ts: todayAt(12, 55), recruiter: 'Sara Park', kind: 'justify', label: 'Justified soft block',
-      target: 'Top-20 university criterion', targetType: 'flag',
-      reasonLabel: 'Specific role requirement documented',
-      notes: 'Team rotates through ML research labs that recruit primarily from these programs. Documented for compliance.' },
-    { ts: todayAt(11, 02), recruiter: 'Sara Park', kind: 'dismiss', label: 'Dismissed',
-      target: 'Candidate 88', targetType: 'candidate', from: 10, to: null,
-      reasonKey: 'musthave', reasonLabel: 'HM-specific must-have evidenced (off-resume context)',
-      notes: 'Confirmed via recruiter call: no payments-domain experience despite Coinbase tenure.' },
+    // No "today" baseline — today's entries come from the user's session actions
+    // (saves, flag acks, overrides, shortlist hand-off). Reset clears all of them.
 
     // ---- Yesterday ----
     { ts: daysAgoAt(1, 17, 30), recruiter: 'Sara Park', kind: 'save', label: 'Saved criteria',
