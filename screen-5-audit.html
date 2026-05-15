@@ -343,6 +343,7 @@
       <div class="title-line">
         <span class="title">Decision log — Senior Backend Engineer, Payments Platform</span>
         <span class="chip compliance">● Compliance-ready</span>
+        <span class="chip" id="richnessChip" title="% of overrides with a structured reason category vs free text only">100% structured</span>
       </div>
       <div class="right">
         <a href="screen-2-ranked.html" class="btn ghost">← Back to candidates</a>
@@ -385,50 +386,10 @@
     <aside class="pane-side">
       <div class="side-card">
         <div class="head">
-          <h3>Decisions today</h3>
-          <div class="sub">All actions captured with structured reason</div>
-        </div>
-        <div class="body">
-          <div class="big-stat">
-            <span class="num" id="todayCount">0</span>
-            <span class="lbl">decisions</span>
-          </div>
-          <div class="big-stat-foot" id="overrideBreakdown">— overrides · — criteria · — ack</div>
-        </div>
-      </div>
-
-      <div class="side-card">
-        <div class="head">
-          <h3>Override-reason richness</h3>
-          <div class="sub">% with structured reason category vs free text only</div>
-        </div>
-        <div class="body">
-          <div class="big-stat">
-            <span class="num" id="richnessPct">100%</span>
-          </div>
-          <div class="richness"><div class="fill" id="richnessFill"></div></div>
-          <div class="richness-label">
-            <span>Free text only</span><span>Fully structured</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="side-card">
-        <div class="head">
           <h3>Distribution by reason</h3>
           <div class="sub">Override reasons across the role family</div>
         </div>
         <div class="body" id="distBody"></div>
-      </div>
-
-      <div class="side-card">
-        <div class="head">
-          <h3>Last criteria change</h3>
-        </div>
-        <div class="body">
-          <div style="font-weight:600; font-size:13px;" id="lastCritTime">—</div>
-          <div style="color: var(--ink-3); font-size: 12px; margin-top: 2px;" id="lastCritDetail">—</div>
-        </div>
       </div>
     </aside>
   </main>
@@ -671,21 +632,12 @@
 
   // -------- Side stats --------
   function renderStats() {
-    const today = new Date(); today.setHours(0,0,0,0);
-    const todayEntries = entries.filter(e => e.ts >= today.getTime());
-    const todayOv = todayEntries.filter(e => ['promote','demote','dismiss'].includes(e.kind)).length;
-    const todayCrit = todayEntries.filter(e => e.kind === 'save').length;
-    const todayAck = todayEntries.filter(e => e.kind === 'ack' || e.kind === 'justify').length;
-    document.getElementById('todayCount').textContent = todayEntries.length;
-    document.getElementById('overrideBreakdown').textContent =
-      `${todayOv} overrides · ${todayCrit} criteria · ${todayAck} ack`;
-
-    // Richness — overrides with both reasonKey + reasonLabel count as structured
+    // Richness chip in header — % of overrides with a structured reason category
     const overrides = entries.filter(e => ['promote','demote','dismiss'].includes(e.kind));
     const structured = overrides.filter(o => o.reasonKey).length;
     const pct = overrides.length ? Math.round((structured / overrides.length) * 100) : 100;
-    document.getElementById('richnessPct').textContent = pct + '%';
-    document.getElementById('richnessFill').style.width = pct + '%';
+    const richnessChip = document.getElementById('richnessChip');
+    if (richnessChip) richnessChip.textContent = `${pct}% structured`;
 
     // Distribution by reason
     const REASON_LABELS = {
@@ -721,12 +673,6 @@
       });
     }
 
-    // Last criteria change
-    const lastCrit = entries.find(e => e.kind === 'save');
-    if (lastCrit) {
-      document.getElementById('lastCritTime').textContent = formatTime(lastCrit.ts) + ' · ' + dateKey(lastCrit.ts).split(' · ')[0];
-      document.getElementById('lastCritDetail').textContent = (lastCrit.target || '') + (lastCrit.change ? ' (' + lastCrit.change + ')' : '');
-    }
   }
 
   // -------- Detail drawer --------
