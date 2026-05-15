@@ -218,6 +218,8 @@
   .crit-row:last-child { border-bottom: none; }
   .crit-row.flagged { background: linear-gradient(0deg, rgba(185,28,28,0.03), rgba(185,28,28,0.03)); }
   .crit-row.flagged .crit-text { color: var(--block); }
+  .crit-row.flagged-warn { background: linear-gradient(0deg, rgba(180,83,9,0.03), rgba(180,83,9,0.03)); }
+  .crit-row.flagged-warn .crit-text { color: var(--warn); }
   .crit-text {
     font-weight: 500; color: var(--ink);
   }
@@ -586,16 +588,31 @@
   const gateList = document.getElementById('gateList');
   const prefList = document.getElementById('prefList');
 
+  // Inline flag-tag for a criterion row, matching the same rules as the right-pane flag conditions.
+  // Hard > Soft block > Soft flag (most severe wins).
+  function criterionFlagTag(c) {
+    const text = c.text;
+    if (/no career gaps/i.test(text) || /recent\s*graduat|native\s*speaker|young/i.test(text)) {
+      return { cls: 'flagged', html: '<span class="crit-flag-tag" style="background:var(--hard-bg); color:var(--hard); border-color:var(--hard-border);">❌ hard block</span>' };
+    }
+    if (c.softBlockId === 'sb-tier' || /faang|elite|top[- ]tier|ivy/i.test(text)) {
+      return { cls: 'flagged', html: '<span class="crit-flag-tag">🛑 soft block</span>' };
+    }
+    if (/\b1[0-9]\+?\s*years/i.test(text)) {
+      return { cls: 'flagged-warn', html: '<span class="crit-flag-tag" style="background:var(--warn-bg); color:var(--warn); border-color:var(--warn-border);">⚠ soft flag</span>' };
+    }
+    return { cls: '', html: '' };
+  }
+
   function renderGates() {
     gateList.innerHTML = '';
     document.getElementById('gateCount').textContent = state.gates.length + (state.gates.length === 1 ? ' criterion' : ' criteria');
     state.gates.forEach(c => {
-      const isHard = /no career gaps/i.test(c.text);
+      const flag = criterionFlagTag(c);
       const row = document.createElement('div');
-      row.className = 'crit-row gate' + (isHard ? ' flagged' : '');
-      const tag = isHard ? '<span class="crit-flag-tag" style="background:var(--hard-bg); color:var(--hard); border-color:var(--hard-border);">❌ hard block</span>' : '';
+      row.className = 'crit-row gate' + (flag.cls ? ' ' + flag.cls : '');
       row.innerHTML = `
-        <div class="crit-text"><span>${escapeHtml(c.text)}</span>${tag}</div>
+        <div class="crit-text"><span>${escapeHtml(c.text)}</span>${flag.html}</div>
         <span class="req-badge">Required</span>
         <span class="ico-x" title="Remove" aria-label="Remove">✕</span>
       `;
@@ -614,15 +631,11 @@
     prefList.innerHTML = '';
     document.getElementById('prefCount').textContent = state.preferred.length + (state.preferred.length === 1 ? ' criterion' : ' criteria');
     state.preferred.forEach(c => {
-      const isSoftBlock = c.softBlockId === 'sb-tier';
-      const isHard = /no career gaps/i.test(c.text);
+      const flag = criterionFlagTag(c);
       const row = document.createElement('div');
-      row.className = 'crit-row weighted' + ((isSoftBlock || isHard) ? ' flagged' : '');
-      const tag = isSoftBlock
-        ? '<span class="crit-flag-tag">🛑 soft block</span>'
-        : (isHard ? '<span class="crit-flag-tag" style="background:var(--hard-bg); color:var(--hard); border-color:var(--hard-border);">❌ hard block</span>' : '');
+      row.className = 'crit-row weighted' + (flag.cls ? ' ' + flag.cls : '');
       row.innerHTML = `
-        <div class="crit-text"><span>${escapeHtml(c.text)}</span>${tag}</div>
+        <div class="crit-text"><span>${escapeHtml(c.text)}</span>${flag.html}</div>
         <div class="weight">
           <label>Weight</label>
           <input type="range" min="1" max="5" value="${c.weight}" />
