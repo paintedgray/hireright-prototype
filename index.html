@@ -25,166 +25,132 @@
   html, body { margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
-    color: var(--ink); background: var(--bg); font-size: 15px; line-height: 1.55;
+    color: var(--ink); background: var(--bg);
+    font-size: 16px; line-height: 1.55;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 920px; margin: 0 auto; padding: 56px 24px 80px; }
+  button, a.cta { font: inherit; color: inherit; cursor: pointer; }
 
-  header { margin-bottom: 36px; }
-  .logo {
-    display: inline-flex; align-items: center; gap: 10px;
-    color: var(--brand-ink); font-weight: 700; letter-spacing: -0.01em; font-size: 14px;
-    margin-bottom: 18px;
+  .wrap {
+    max-width: 760px; margin: 0 auto;
+    padding: 88px 32px 96px;
   }
-  .logo-mark {
-    width: 26px; height: 26px; border-radius: 6px;
-    background: linear-gradient(135deg, #14b8a6, #0e6b6b);
-    display: grid; place-items: center; color: white; font-size: 13px; font-weight: 800;
-  }
+
   h1 {
-    font-size: 32px; font-weight: 700; letter-spacing: -0.02em;
-    margin: 0 0 14px; line-height: 1.15;
-  }
-  .lede { color: var(--ink-2); font-size: 16px; max-width: 720px; line-height: 1.6; }
-  .lede strong { color: var(--ink); font-weight: 600; }
-
-  .section-label {
-    text-transform: uppercase; letter-spacing: 0.08em;
-    font-size: 11px; font-weight: 700; color: var(--ink-3);
-    margin: 36px 0 12px;
+    font-size: 34px; font-weight: 700; letter-spacing: -0.022em;
+    margin: 0 0 64px; line-height: 1.1;
   }
 
-  .cards { display: grid; grid-template-columns: 1fr; gap: 14px; }
-  .card {
-    display: grid; grid-template-columns: 56px 1fr auto; gap: 18px;
-    align-items: center;
-    padding: 20px 22px;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; box-shadow: var(--shadow-sm);
-    text-decoration: none; color: inherit;
-    transition: border-color .15s ease, box-shadow .15s ease, transform .04s ease;
-  }
-  .card:hover { border-color: var(--border-strong); box-shadow: var(--shadow); }
-  .card:active { transform: translateY(0.5px); }
-  .card .num {
-    width: 44px; height: 44px; border-radius: 10px;
-    background: var(--brand-soft); color: var(--brand-ink);
-    border: 1px solid #bfe1e1;
-    display: grid; place-items: center; font-weight: 700; font-size: 17px;
-    font-variant-numeric: tabular-nums;
-  }
-  .card.hero .num { background: var(--brand); color: white; border-color: var(--brand); }
-  .card .body .name { font-weight: 600; font-size: 16px; letter-spacing: -0.005em; }
-  .card .body .desc { color: var(--ink-3); font-size: 13.5px; margin-top: 3px; line-height: 1.5; }
-  .card .arrow {
-    color: var(--ink-4); font-size: 18px; transition: transform .15s ease, color .15s ease;
-  }
-  .card:hover .arrow { color: var(--brand); transform: translateX(3px); }
-  .pill {
-    display: inline-block; margin-left: 8px;
-    padding: 2px 8px; border-radius: 999px;
-    background: var(--brand-soft); color: var(--brand-ink);
-    border: 1px solid #bfe1e1;
-    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
-    vertical-align: middle;
-  }
-  .pill.soft { background: #eef2f7; color: var(--ink-3); border-color: var(--border); text-transform: none; letter-spacing: 0; font-weight: 500; }
-
-  .flow {
-    margin-top: 28px; padding: 18px 22px;
-    background: var(--surface); border: 1px dashed var(--border-strong);
-    border-radius: 12px; color: var(--ink-2); font-size: 13.5px; line-height: 1.65;
-  }
-  .flow strong { color: var(--ink); font-weight: 600; }
-  .flow code {
-    background: #eef2f7; padding: 1px 6px; border-radius: 4px;
-    font-size: 12.5px; font-family: ui-monospace, monospace;
+  section { margin-bottom: 56px; }
+  section:last-of-type { margin-bottom: 72px; }
+  .tag {
+    display: inline-block;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 11.5px; font-weight: 700; color: var(--brand);
+    margin-bottom: 16px;
   }
 
+  section p.lede {
+    font-size: 17px; color: var(--ink-2); margin: 0 0 18px; line-height: 1.55;
+  }
+
+  ul {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: 12px;
+  }
+  ul li {
+    display: grid; grid-template-columns: 8px 1fr; gap: 14px; align-items: start;
+    font-size: 15.5px; color: var(--ink-2); line-height: 1.55;
+  }
+  ul li::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ink-4); margin-top: 11px;
+  }
+  ul li strong { color: var(--ink); font-weight: 600; }
+  ul li em { color: var(--ink); font-style: italic; }
+
+  /* CTA */
+  .cta-row {
+    margin-top: 8px;
+    display: flex; align-items: center; gap: 14px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .cta {
+    background: var(--brand); color: #fff;
+    border: 1px solid var(--brand);
+    padding: 14px 28px; border-radius: 10px;
+    font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background .12s ease, border-color .12s ease, transform .04s ease;
+  }
+  .cta:hover { background: var(--brand-ink); border-color: var(--brand-ink); }
+  .cta:active { transform: translateY(0.5px); }
+  .cta .arrow { font-size: 17px; }
+
+  .cta-aside {
+    color: var(--ink-3); font-size: 13px;
+  }
+  .cta-aside a { color: var(--ink-3); }
+  .cta-aside a:hover { color: var(--brand); }
+
+  /* Footer */
   footer {
-    margin-top: 48px; padding-top: 24px;
+    margin-top: 80px; padding-top: 24px;
     border-top: 1px solid var(--border);
     color: var(--ink-4); font-size: 12.5px;
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
   }
-  footer a { color: var(--ink-3); }
+  footer a { color: var(--ink-3); text-decoration: none; }
+  footer a:hover { color: var(--brand); }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header>
-    <div class="logo"><div class="logo-mark">HR</div><span>HireRight prototype</span></div>
-    <h1>An AI-augmented hiring workflow — built with bias control upstream, not bolted on.</h1>
-    <p class="lede">
-      A working prototype for a recruiter triaging 150 applicants on a senior-engineering role.
-      Three screens demonstrate the thesis: <strong>define what "good" looks like before the model produces a shortlist</strong>,
-      <strong>show confidence bands honestly inside the commitment</strong>, and
-      <strong>capture override reasoning as first-class data</strong>.
-    </p>
-  </header>
+  <h1>Hiring Workflow Prototype</h1>
 
-  <div class="section-label">Walkthrough</div>
-  <div class="cards">
+  <section>
+    <div class="tag">Problem</div>
+    <p class="lede">Recruiters reviewing 50–100 applicants must produce a defensible shortlist of 5–10 — at speed, with audit-grade reasoning, while retaining ownership.</p>
+    <p style="color: var(--ink-2); margin: 0 0 16px; font-size: 15.5px;">Three things break this:</p>
+    <ul>
+      <li><span><strong>Compressed scoring</strong> — many candidates look similarly strong</span></li>
+      <li><span><strong>Defensibility under audit</strong> — legal exposure if reasoning isn't captured</span></li>
+      <li><span><strong>Manual override</strong> — recruiters add nuance the model can't see</span></li>
+    </ul>
+  </section>
 
-    <a class="card" href="screen-1-criteria.html">
-      <div class="num">1</div>
-      <div class="body">
-        <div class="name">Criteria Builder + Proxy Stress Test</div>
-        <div class="desc">Define must-haves, weighted preferences, and signal tuning. The system runs a pre-flight bias check on the criteria themselves — a three-tier action system (soft flag · soft block · hard block).</div>
-      </div>
-      <div class="arrow">→</div>
-    </a>
+  <section>
+    <div class="tag">Approach</div>
+    <ul>
+      <li><span><strong>Commit to a top-N.</strong> Always produce a defensible shortlist. Surface compression <em>inside</em> it as statistical-tie clusters.</span></li>
+      <li><span><strong>Recruiter overrides are the moat.</strong> Capture override <em>reasons</em> as structured data, not free text. Day 1 we're comparable to off-the-shelf; Day 365 we're not.</span></li>
+      <li><span><strong>Bias is managed, not avoided.</strong> Control runs <em>upstream</em> of the ranker, at the criteria-definition surface.</span></li>
+    </ul>
+  </section>
 
-    <a class="card" href="screen-2-ranked.html">
-      <div class="num">2</div>
-      <div class="body">
-        <div class="name">Ranked Candidate View + Confidence Bands <span class="pill soft">Start the demo flow here</span></div>
-        <div class="desc">The recruiter's working surface. 150 candidates grouped into Tier A (high confidence), Tier B (statistically indistinguishable), and Tier C (mixed signals). All candidates remain visible — no auto-rejection.</div>
-      </div>
-      <div class="arrow">→</div>
-    </a>
+  <section>
+    <div class="tag">Goals</div>
+    <ul>
+      <li><span>Define criteria with a hidden-bias check that runs <em>before</em> save</span></li>
+      <li><span>Always commit to top 5–10, with confidence bands shown honestly inside the commitment</span></li>
+      <li><span>Capture <em>why</em> recruiters override using a curated structured taxonomy</span></li>
+      <li><span>Log every decision in audit-grade detail</span></li>
+      <li><span>Catch bias upstream, not after the shortlist</span></li>
+    </ul>
+  </section>
 
-    <a class="card hero" href="screen-3-override.html">
-      <div class="num">3</div>
-      <div class="body">
-        <div class="name">Structured Override Capture <span class="pill">Hero</span></div>
-        <div class="desc">When the recruiter promotes, demotes, or dismisses a candidate, capture <em>why</em> as structured data — not free text. Reason category → auto-suggested detail → optional notes. Pattern detection runs quietly in the background.</div>
-      </div>
-      <div class="arrow">→</div>
-    </a>
-
-    <a class="card" href="screen-4-context.html">
-      <div class="num">4</div>
-      <div class="body">
-        <div class="name">Per-Candidate Context Drawer</div>
-        <div class="desc">Evidence-based context — not score numbers. Auto-extracted snapshot, must-have checklist with green ✓ / amber ⚠ markers, and a resume excerpt with the matching bullets highlighted. Sticky override actions at the bottom.</div>
-      </div>
-      <div class="arrow">→</div>
-    </a>
-
-    <a class="card" href="screen-5-audit.html">
-      <div class="num">5</div>
-      <div class="body">
-        <div class="name">Decision Log <span class="pill">Compliance</span></div>
-        <div class="desc">Audit-grade decision trail. Every override, criteria change, and flag acknowledgment captured with timestamp, human attribution, and structured reason. Filter, search, and export to CSV for compliance handoff.</div>
-      </div>
-      <div class="arrow">→</div>
-    </a>
-
-  </div>
-
-  <div class="flow">
-    <strong>Demo flow (~2 min):</strong>
-    Open <code>Screen 2</code> → scroll past the shortlist commit line → click <strong>Candidate 12</strong> at rank #15
-    → drawer (Screen 4) shows strong must-have evidence with only AI/ML missing (a Preferred)
-    → click <code>↑ Promote to top 10</code> → structured override capture (Screen 3) opens with the spec-pre-filled reason
-    → Submit → return to Screen 2 and watch Candidate 12 land in Tier A with an audit-tagged badge.
-    Then click <code>📋 Decision log</code> to see the override land in the audit trail alongside historical entries.
-    Hit <code>↻ Reset demo</code> on Screen 2 to start clean.
+  <div class="cta-row">
+    <a class="cta" href="screen-1-criteria.html">Start demo <span class="arrow">→</span></a>
+    <span class="cta-aside">Opens at the Criteria Builder · ~2 minute walkthrough</span>
   </div>
 
   <footer>
-    Built as a prototype demonstration · <a href="https://github.com/paintedgray/hireright-prototype">View source</a>
+    <span>Hiring workflow prototype · 2026</span>
+    <a href="https://github.com/paintedgray/hireright-prototype" target="_blank" rel="noopener">View source</a>
   </footer>
 
 </div>
