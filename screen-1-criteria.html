@@ -498,10 +498,10 @@
   // -------- State --------
   const state = {
     gates: [
-      { id: 'g1', text: '10+ years senior backend engineering' },
-      { id: 'g2', text: 'Distributed systems production experience' },
+      { id: 'g1', text: 'Distributed systems production experience' },
     ],
     preferred: [
+      { id: 'p0', text: '10+ years senior backend engineering', weight: 3 },
       { id: 'p1', text: 'Payments or fintech domain', weight: 4 },
       { id: 'p2', text: 'Team leadership', weight: 3 },
       { id: 'p3', text: 'AI / ML experience', weight: 3 },
@@ -513,7 +513,7 @@
         id: 'sf-years',
         sev: 'warn',
         title: 'High years-of-experience requirement may correlate with age',
-        desc: 'Gate "10+ years senior backend engineering" — high years thresholds correlate with age-disparate impact in tech hiring.',
+        desc: 'Preferred criterion "10+ years senior backend engineering" — high years thresholds correlate with age-disparate impact in tech hiring.',
         rec: 'Consider lowering to 8+ unless deep seniority is the explicit ask.',
         condition: () => allCriteria().some(c => /\b1[0-9]\+?\s*years/i.test(c.text)),
         actions: ['ack', 'adjust:years'],

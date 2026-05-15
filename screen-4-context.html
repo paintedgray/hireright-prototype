@@ -407,12 +407,8 @@
     <!-- Body — populated by renderBody() based on candidate ID -->
     <div class="dbody" id="dbody"></div>
 
-    <!-- Section D: sticky overrides -->
-    <footer class="dactions">
-      <button class="demote" data-action="demote">↓ Demote</button>
-      <button class="dismiss" data-action="dismiss">✕ Dismiss</button>
-      <button class="promote" data-action="promote">↑ Promote to top 10</button>
-    </footer>
+    <!-- Section D: sticky overrides — populated based on candidate rank -->
+    <footer class="dactions" id="dactions"></footer>
   </aside>
 </div>
 
@@ -438,6 +434,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Stripe role: <strong>"led infra migration lifting throughput 40%"</strong>' },
+        { status: 'ok', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          evidence: '<strong>6 years</strong> at senior+/staff level — at threshold' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Stripe core payments + prior Robinhood and Affirm roles</strong>' },
         { status: 'ok', type: 'preferred', weight: 3, name: 'AI / ML experience', anchor: 'ml',
@@ -482,6 +480,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Square role: <strong>"fraud-scoring service at 200M evals/day"</strong>' },
+        { status: 'ok', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          evidence: '<strong>8 years</strong>, full senior tenure — meets the preferred threshold' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Square fraud + prior Visa risk-analytics role</strong>' },
         { status: 'ok', type: 'preferred', weight: 3, name: 'AI / ML experience', anchor: 'ml',
@@ -528,6 +528,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Plaid role: <strong>"core ledger service · sub-50ms p99 across 12B txns/yr"</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          none: '<strong>5 years</strong> — below the preferred 10+ threshold, though all years are at senior+ level.' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Plaid bank-rails + prior Modern Treasury role</strong>' },
         { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
@@ -567,6 +569,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Stripe role: <strong>"dispute-handling pipeline · 80M txns/day"</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          none: '<strong>4 years</strong> — well below the preferred 10+ threshold.' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Stripe Disputes API and chargeback flow</strong>' },
         { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
@@ -599,6 +603,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Adyen role: <strong>"risk-scoring pipeline · 85M txns/day"</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          none: '<strong>4 years</strong> — well below the preferred 10+ threshold.' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Adyen risk + prior Worldpay role</strong>' },
         { status: 'ok', type: 'preferred', weight: 3, name: 'AI / ML experience', anchor: 'ml',
@@ -632,6 +638,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Shopify role: <strong>"billing-events pipeline · 75M txns/day"</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          none: '<strong>4 years</strong> — well below the preferred 10+ threshold.' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Shopify Payments + billing-engine ownership</strong>' },
         { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
@@ -664,6 +672,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Affirm role: <strong>"underwriting pipeline · 70M txns/day"</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          none: '<strong>3 years</strong> total — newly promoted to Senior, below the preferred 10+ threshold.' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Affirm BNPL underwriting + loan-servicing</strong>' },
         { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
@@ -695,6 +705,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Klarna role: <strong>"settlement pipeline · 80M txns/day"</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          none: '<strong>4 years</strong> — well below the preferred 10+ threshold.' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Direct — <strong>Klarna settlement + prior payments role</strong>' },
         { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
@@ -726,6 +738,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Google role: <strong>"Spanner storage tier + F1 query layer"</strong> — exceptionally strong' },
+        { status: 'miss', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          none: '<strong>4 years</strong> — below preferred, and SWE II is mid-IC level (not senior).' },
         { status: 'miss', type: 'preferred', weight: 4, name: 'Payments domain',
           none: 'No payments / fintech evidence on resume. Google work is in storage and ads-infra.' },
         { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
@@ -755,8 +769,10 @@
       rank: 10, tier: 'Tier C — Mixed signals', tierClass: 'C', revealName: 'Eva Reyes',
       snapshot: { years: 7, mostRecent: 'Senior Engineer @ Coinbase (4 yrs)', domain: { strength: 'Strong', detail: 'crypto-payments, but light recent IC ownership' }, quantCount: 3 },
       mustHaves: [
-        { status: 'miss', type: 'gate', name: 'Distributed systems experience',
-          none: 'Older IC work shows distributed-systems depth, but the last 2 years have been management-track without recent ownership.' },
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Earlier Stripe role showed strong IC depth; recent Coinbase role is management-track with less hands-on IC ownership.' },
+        { status: 'miss', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          none: '<strong>7 years</strong> total — close to threshold; senior tenure but recent role isn\'t hands-on IC.' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Deep — <strong>4 years at Coinbase across multiple crypto-payments products</strong>' },
         { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
@@ -793,6 +809,8 @@
       mustHaves: [
         { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
           evidence: 'Found in Square role: <strong>"led platform migration cutting latency 60%"</strong>' },
+        { status: 'ok', type: 'preferred', weight: 3, name: '10+ years senior backend engineering',
+          evidence: '<strong>6 years</strong> at senior level — at threshold' },
         { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
           evidence: 'Found in <strong>Square + previous Coinbase role</strong>' },
         { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
@@ -927,6 +945,23 @@
       renderSnapshot(c) + renderMustHaves(c) + renderResume(c);
   }
 
+  function renderActions(c) {
+    // Promote only available for below-the-line candidates (rank > 10).
+    // Demote only available for top-10 candidates.
+    // Dismiss always available.
+    const inTopTen = c.rank <= 10;
+    const buttons = inTopTen
+      ? `<button class="demote" data-action="demote">↓ Demote</button>
+         <button class="dismiss" data-action="dismiss">✕ Dismiss</button>`
+      : `<button class="dismiss" data-action="dismiss">✕ Dismiss</button>
+         <button class="promote" data-action="promote">↑ Promote to top 10</button>`;
+    document.getElementById('dactions').innerHTML = buttons;
+    // Wire handlers
+    document.querySelectorAll('#dactions button').forEach(b => {
+      b.addEventListener('click', () => handleOverrideAction(c, b.dataset.action));
+    });
+  }
+
   function init() {
     const c = CAND[candidateId];
     document.getElementById('candIdLabel').textContent = candidateId;
@@ -949,6 +984,7 @@
     tierPill.innerHTML = `<span class="dot"></span>${c.tier} · #${c.rank}`;
 
     renderBody(c);
+    renderActions(c);
   }
   init();
 
@@ -999,20 +1035,19 @@
     });
   });
 
-  // -------- Override action buttons → navigate to Screen 3 --------
-  document.querySelectorAll('.dactions button').forEach(b => {
-    b.addEventListener('click', () => {
-      const action = b.dataset.action;
-      const c = CAND[candidateId];
-      let from = c?.rank || fromRank;
-      let to = 'top 10';
-      if (action === 'promote') to = 'top 10';
-      else if (action === 'demote') to = String(Number(from) + 6 || 21);
-      else if (action === 'dismiss') to = 'removed';
-      const url = `screen-3-override.html?candidate=${candidateId}&action=${action}&from=${from}&to=${encodeURIComponent(to)}`;
-      window.location.href = url;
-    });
-  });
+  // -------- Override action handler (wired in renderActions) → navigate to Screen 3 --------
+  // Promote → lands at end of Tier A, narrative 'top 10'.
+  // Demote → lands at #11 (first below-the-line slot).
+  // Dismiss → removed.
+  function handleOverrideAction(c, action) {
+    const from = c.rank;
+    let to;
+    if (action === 'promote')      to = 'top 10';
+    else if (action === 'demote')  to = 11;
+    else if (action === 'dismiss') to = 'removed';
+    const url = `screen-3-override.html?candidate=${candidateId}&action=${action}&from=${from}&to=${encodeURIComponent(to)}`;
+    window.location.href = url;
+  }
 
   // -------- Close → back to Screen 2 --------
   function closeDrawer() { window.location.href = 'screen-2-ranked.html'; }
