@@ -260,21 +260,31 @@
     background: #fff; border: 2px solid var(--brand); cursor: pointer;
   }
 
-  /* Add criterion */
-  .add-row {
+  /* Suggested-additions chip row (replaces free-text add) */
+  .suggest-row {
     padding: 12px 18px;
-    display: flex; gap: 10px; align-items: center;
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
     border-top: 1px dashed var(--border);
     background: var(--surface-2);
     border-bottom-left-radius: var(--radius);
     border-bottom-right-radius: var(--radius);
   }
-  .add-row input[type=text] {
-    flex: 1; border: 1px solid var(--border-strong); border-radius: 8px;
-    padding: 8px 12px; font: inherit; color: var(--ink);
-    background: var(--surface);
+  .suggest-label {
+    font-size: 12px; color: var(--ink-3);
+    text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+    margin-right: 4px;
   }
-  .add-row input[type=text]:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(14,107,107,0.12); }
+  .suggest-chip {
+    border: 1px solid var(--border-strong); background: var(--surface);
+    color: var(--ink-2); padding: 6px 12px; border-radius: 999px;
+    font: inherit; font-size: 12.5px; font-weight: 500;
+    cursor: pointer; transition: all .12s ease;
+  }
+  .suggest-chip:hover { background: var(--brand-soft); border-color: #bfe1e1; color: var(--brand-ink); }
+  .suggest-chip:disabled {
+    opacity: 0.4; cursor: not-allowed; background: var(--surface-2);
+  }
+  .suggest-chip:disabled:hover { background: var(--surface-2); border-color: var(--border-strong); color: var(--ink-3); }
 
 
   /* ------- Right pane: stress test ------- */
@@ -386,24 +396,6 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
 
-  /* Demo cue */
-  .demo-cue {
-    margin-top: 18px;
-    background: #0b2027; color: #cbd5e1;
-    border-radius: var(--radius);
-    padding: 12px 14px; font-size: 12px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .demo-cue .kbd {
-    background: #1e293b; border: 1px solid #334155; color: #f1f5f9;
-    padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 11px;
-  }
-  .demo-cue button {
-    margin-left: auto; background: #14b8a6; border: 0; color: #03201e;
-    padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;
-  }
-  .demo-cue button:hover { background: #2dd4bf; }
-
   .footer-note {
     margin-top: 24px; color: var(--ink-4); font-size: 11px; text-align: center;
   }
@@ -454,7 +446,7 @@
     <div class="page-intro">
       <div class="page-intro-icon">ⓘ</div>
       <div class="page-intro-text">
-        Define gates and weighted preferred criteria for the role. The right panel runs a live bias check — three tiers (soft flag, soft block, hard block) fire <em>before</em> save. Resolve flags to unlock Save; click <strong>Trigger hard block</strong> to see the enforcement example.
+        Define gates and weighted preferred criteria for the role. The right panel runs a live bias check — three tiers (soft flag, soft block, hard block) fire <em>before</em> save. Try the <strong>Suggested additions</strong> chips under each section to see each tier in action.
       </div>
     </div>
 
@@ -472,9 +464,10 @@
           <div class="subhead">Boolean gates. A candidate weak on any of these is excluded from the top 10.</div>
         </div>
         <div class="section-body" id="gateList"></div>
-        <div class="add-row">
-          <input id="addGateInput" type="text" placeholder='Add a must-have (e.g., "Cloud platform experience")' />
-          <button class="btn" id="addGateBtn">+ Add must-have</button>
+        <div class="suggest-row">
+          <span class="suggest-label">Suggested additions:</span>
+          <button class="suggest-chip" data-target="gates" data-text="Computer Science or related degree">+ Computer Science or related degree</button>
+          <button class="suggest-chip" data-target="gates" data-text="Recent graduate">+ Recent graduate</button>
         </div>
       </div>
 
@@ -489,17 +482,11 @@
           <div class="subhead">Weighted criteria. Among candidates who clear the gates, these shape the ranking.</div>
         </div>
         <div class="section-body" id="prefList"></div>
-        <div class="add-row">
-          <input id="addPrefInput" type="text" placeholder='Add a preferred criterion (e.g., "Open-source contributions")' />
-          <button class="btn" id="addPrefBtn">+ Add preferred criterion</button>
+        <div class="suggest-row">
+          <span class="suggest-label">Suggested additions:</span>
+          <button class="suggest-chip" data-target="preferred" data-text="Open-source contributions">+ Open-source contributions</button>
+          <button class="suggest-chip" data-target="preferred" data-text="FAANG company experience">+ FAANG company experience</button>
         </div>
-      </div>
-
-      <!-- Demo cue -->
-      <div class="demo-cue">
-        <span>🎬</span>
-        <span>Demo cue: click <span class="kbd">Trigger hard block</span> mid-walkthrough to fire the "no career gaps" example.</span>
-        <button id="triggerHard">Trigger hard block</button>
       </div>
 
       <div class="footer-note">Screen 1 of 5 · Criteria Builder + Proxy Stress Test</div>
@@ -567,6 +554,26 @@
         rec: 'Remove the criterion or rephrase to a job-relevant requirement.',
         condition: () => allCriteria().some(c => /no career gaps/i.test(c.text)),
         actions: ['remove:hb-gap'],
+        resolved: false,
+      },
+      {
+        id: 'hb-protected',
+        sev: 'hard',
+        title: 'Hard block · protected-attribute language detected',
+        desc: 'Criterion text contains "recent graduate" — direct age-proxy language is not permitted on this platform.',
+        rec: 'Remove the criterion or rephrase to a skill-based requirement.',
+        condition: () => allCriteria().some(c => /recent\s*graduat|native\s*speaker|young/i.test(c.text)),
+        actions: ['remove:hb-protected'],
+        resolved: false,
+      },
+      {
+        id: 'sb-prestige',
+        sev: 'block',
+        title: 'Soft block · prestige-shortcut detected',
+        desc: 'Criterion text contains "FAANG" — pedigree-shortcut criteria correlate with race + socioeconomic class.',
+        rec: 'Document a role-specific justification or remove the criterion.',
+        condition: () => allCriteria().some(c => /faang|elite|top[- ]tier|ivy/i.test(c.text)),
+        actions: ['justify', 'remove:sb-prestige'],
         resolved: false,
       },
     ],
@@ -726,7 +733,9 @@
       'adjust:years': '<button class="btn" data-action="adjust:years">Lower to 8+ years</button>',
       'justify': '<button class="btn" data-action="justify">Document justification</button>',
       'remove:sb-tier': '<button class="btn" data-action="remove:sb-tier">Remove criterion</button>',
+      'remove:sb-prestige': '<button class="btn" data-action="remove:sb-prestige">Remove criterion</button>',
       'remove:hb-gap': '<button class="btn primary" data-action="remove:hb-gap">Remove criterion</button>',
+      'remove:hb-protected': '<button class="btn primary" data-action="remove:hb-protected">Remove criterion</button>',
     };
     return `<div class="flag-actions">${f.actions.map(a => map[a] || '').join('')}</div>`;
   }
@@ -812,40 +821,72 @@
       renderAll();
       return;
     }
+    if (action === 'remove:hb-protected') {
+      const pattern = /recent\s*graduat|native\s*speaker|young/i;
+      state.gates = state.gates.filter(c => !pattern.test(c.text));
+      state.preferred = state.preferred.filter(c => !pattern.test(c.text));
+      f.resolved = false;
+      pushLogEntry({
+        kind: 'ack', label: 'Removed criterion',
+        target: 'Protected-attribute criterion', targetType: 'flag',
+        reasonLabel: 'Hard block resolved — protected-attribute language not permitted',
+        notes: '',
+      });
+      renderAll();
+      return;
+    }
+    if (action === 'remove:sb-prestige') {
+      const pattern = /faang|elite|top[- ]tier|ivy/i;
+      state.gates = state.gates.filter(c => !pattern.test(c.text));
+      state.preferred = state.preferred.filter(c => !pattern.test(c.text));
+      f.resolved = false;
+      pushLogEntry({
+        kind: 'ack', label: 'Removed criterion',
+        target: 'Prestige-shortcut criterion', targetType: 'flag',
+        reasonLabel: 'Soft block resolved by removing criterion',
+        notes: 'Recruiter chose to remove rather than document a justification.',
+      });
+      renderAll();
+      return;
+    }
   }
 
   // Signal-tuning UI removed — model behavior is role-template defaulted (see .role-context).
 
-  // -------- Add criterion (two separate inputs) --------
-  function wireAdd(btnId, inpId, target) {
-    const btn = document.getElementById(btnId);
-    const inp = document.getElementById(inpId);
-    btn.addEventListener('click', () => {
-      const text = inp.value.trim();
-      if (!text) { inp.focus(); return; }
-      if (target === 'gates') {
-        state.gates.push({ id: 'g' + Date.now(), text });
-      } else {
-        state.preferred.push({ id: 'p' + Date.now(), text, weight: 3 });
-      }
-      inp.value = '';
-      renderAll();
+  // -------- Suggested-addition chips → add criterion + fire any matching flag --------
+  function addCriterion(target, text) {
+    // Skip if already present
+    if (allCriteria().some(c => c.text.toLowerCase() === text.toLowerCase())) return;
+    if (target === 'gates') {
+      state.gates.push({ id: 'g' + Date.now(), text });
+    } else {
+      state.preferred.push({ id: 'p' + Date.now(), text, weight: 3 });
+    }
+    // Reset any matching flag's resolved state so it re-evaluates cleanly
+    state.flags.forEach(f => {
+      if (f.condition()) f.resolved = false;
     });
-    inp.addEventListener('keydown', e => {
-      if (e.key === 'Enter') btn.click();
+    renderAll();
+    // Smooth-scroll the stress-test panel to the top so the new flag is visible
+    document.querySelector('.pane-right')?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function refreshChips() {
+    document.querySelectorAll('.suggest-chip').forEach(chip => {
+      const text = chip.dataset.text;
+      const exists = allCriteria().some(c => c.text.toLowerCase() === text.toLowerCase());
+      chip.disabled = exists;
+      chip.textContent = (exists ? '✓ ' : '+ ') + text;
     });
   }
-  wireAdd('addGateBtn', 'addGateInput', 'gates');
-  wireAdd('addPrefBtn', 'addPrefInput', 'preferred');
 
-  // -------- Demo trigger: hard block (adds to gates) --------
-  document.getElementById('triggerHard').addEventListener('click', () => {
-    if (allCriteria().some(c => /no career gaps/i.test(c.text))) return;
-    state.gates.push({ id: 'g-gap', text: 'No career gaps allowed' });
-    state.flags.find(f => f.id === 'hb-gap').resolved = false;
-    renderAll();
-    document.querySelector('.pane-right').scrollTo({ top: 0, behavior: 'smooth' });
+  document.querySelectorAll('.suggest-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      addCriterion(chip.dataset.target, chip.dataset.text);
+      refreshChips();
+    });
   });
+  refreshChips();
 
   // -------- Audit log writes (shared state) --------
   const STORAGE_KEY = 'srOverrides';
@@ -949,6 +990,7 @@
     renderGates();
     renderPreferred();
     renderFlags();
+    if (typeof refreshChips === 'function') refreshChips();
   }
 
   // init
