@@ -721,8 +721,10 @@
       if (!cand) return;
       cand._override = o;
       if (o.action === 'promote') {
-        tierA.unshift(cand);
+        // Promote always lands at the END of Tier A (last position in the top tier)
+        tierA.push(cand);
       } else if (o.action === 'demote') {
+        // Demote always lands at the FIRST position below the line
         belowSample.unshift(cand);
       }
       // dismiss handled via state.dismissed below
@@ -745,6 +747,17 @@
     tierA.forEach(c => renderRow(c, 'A'));
     tierB.forEach(c => renderRow(c, 'B'));
     tierC.forEach(c => renderRow(c, 'C'));
+
+    // Dynamic tier counts (account for promotes / demotes / dismissals)
+    const liveCount = arr => arr.filter(c => !dismissed.has(c.id)).length;
+    const fmt = n => `${n} ${n === 1 ? 'candidate' : 'candidates'}`;
+    const setCount = (sel, n) => {
+      const el = document.querySelector(sel);
+      if (el) el.textContent = fmt(n);
+    };
+    setCount('#tier-A .tier-count', liveCount(tierA));
+    setCount('#tier-B .tier-count', liveCount(tierB));
+    setCount('#tier-C .tier-count', liveCount(tierC));
 
     const below = document.getElementById('belowList');
     below.innerHTML = '';
@@ -774,7 +787,6 @@
         </div>
       </div>
       <div class="actions">
-        <button class="promote" data-action="promote">↑ Promote</button>
         <button class="demote" data-action="demote">↓ Demote</button>
         <button class="dismiss" data-action="dismiss">✕ Dismiss</button>
         <button class="view" data-action="view">View →</button>
@@ -809,6 +821,7 @@
       </div>
       <div class="actions">
         <button data-action="promote">↑ Promote</button>
+        <button data-action="dismiss">✕ Dismiss</button>
         <button data-action="view">View →</button>
       </div>
     `;
@@ -861,10 +874,13 @@
     window.location.href = `screen-4-context.html?candidate=${c.id}&from=${c.rank}`;
   }
   // -------- Open Screen 3 (override) on promote/demote/dismiss --------
+  // Promote: only available on below-the-line candidates → lands at end of Tier A.
+  // Demote: only available on top-10 candidates → lands at first below-the-line slot (#11).
+  // Dismiss: available everywhere → removed from consideration.
   function openOverrideStub(c, action) {
-    let from = c.rank, to = 'top 10';
-    if (action === 'promote') to = 'top 10';
-    else if (action === 'demote')  to = c.rank + 6;
+    let from = c.rank, to;
+    if (action === 'promote')      to = 'top 10';
+    else if (action === 'demote')  to = 11;
     else if (action === 'dismiss') to = 'removed';
     const url = `screen-3-override.html?candidate=${c.id}&action=${action}&from=${from}&to=${encodeURIComponent(to)}`;
     window.location.href = url;
