@@ -43,11 +43,11 @@
 
   section { margin-bottom: 56px; }
   section:last-of-type { margin-bottom: 72px; }
-  .tag {
-    display: inline-block;
-    text-transform: uppercase; letter-spacing: 0.12em;
-    font-size: 11.5px; font-weight: 700; color: var(--brand);
-    margin-bottom: 16px;
+  h2 {
+    margin: 0 0 18px;
+    font-size: 24px; font-weight: 700; letter-spacing: -0.015em;
+    color: var(--ink);
+    line-height: 1.2;
   }
 
   section p.lede {
@@ -77,24 +77,18 @@
     border-top: 1px solid var(--border);
   }
   .cta {
-    background: var(--brand); color: #fff;
-    border: 1px solid var(--brand);
+    background: var(--ink); color: #ffffff;
+    border: 1px solid var(--ink);
     padding: 14px 28px; border-radius: 10px;
     font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
-    box-shadow: var(--shadow);
+    box-shadow: 0 4px 14px rgba(15,23,42,0.18), 0 1px 3px rgba(15,23,42,0.10);
     text-decoration: none;
     display: inline-flex; align-items: center; gap: 8px;
     transition: background .12s ease, border-color .12s ease, transform .04s ease;
   }
-  .cta:hover { background: var(--brand-ink); border-color: var(--brand-ink); }
+  .cta:hover { background: #1e293b; border-color: #1e293b; }
   .cta:active { transform: translateY(0.5px); }
   .cta .arrow { font-size: 17px; }
-
-  .cta-aside {
-    color: var(--ink-3); font-size: 13px;
-  }
-  .cta-aside a { color: var(--ink-3); }
-  .cta-aside a:hover { color: var(--brand); }
 
   /* Footer */
   footer {
@@ -113,7 +107,7 @@
   <h1>Hiring Workflow Prototype</h1>
 
   <section>
-    <div class="tag">Problem</div>
+    <h2>Problem</h2>
     <p class="lede">Recruiters reviewing 50–100 applicants must produce a defensible shortlist of 5–10 — at speed, with audit-grade reasoning, while retaining ownership.</p>
     <p style="color: var(--ink-2); margin: 0 0 16px; font-size: 15.5px;">Three things break this:</p>
     <ul>
@@ -124,7 +118,7 @@
   </section>
 
   <section>
-    <div class="tag">Approach</div>
+    <h2>Approach</h2>
     <ul>
       <li><span><strong>Commit to a top-N.</strong> Always produce a defensible shortlist. Surface compression <em>inside</em> it as statistical-tie clusters.</span></li>
       <li><span><strong>Recruiter overrides are the moat.</strong> Capture override <em>reasons</em> as structured data, not free text. Day 1 we're comparable to off-the-shelf; Day 365 we're not.</span></li>
@@ -133,7 +127,7 @@
   </section>
 
   <section>
-    <div class="tag">Goals</div>
+    <h2>Goals</h2>
     <ul>
       <li><span>Define criteria with a hidden-bias check that runs <em>before</em> save</span></li>
       <li><span>Always commit to top 5–10, with confidence bands shown honestly inside the commitment</span></li>
@@ -145,7 +139,6 @@
 
   <div class="cta-row">
     <a class="cta" href="screen-1-criteria.html">Start demo <span class="arrow">→</span></a>
-    <span class="cta-aside">Opens at the Criteria Builder · ~2 minute walkthrough</span>
   </div>
 
   <footer>
