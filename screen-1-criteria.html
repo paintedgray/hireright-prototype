@@ -85,10 +85,10 @@
   }
   .chip.draft { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
   .chip.active { background: var(--ok-bg); color: var(--ok); border-color: var(--ok-border); }
-  /* After-save button transformation */
+  /* After-save button transformation — brief slide-in then continuous attention pulse */
   .btn.view-shortlist {
     background: var(--brand); border-color: var(--brand); color: #fff;
-    animation: slidePulse 0.5s ease;
+    animation: slidePulse 0.5s ease, viewShortlistPulse 1.6s ease-in-out 0.5s infinite;
   }
   @keyframes slidePulse {
     0%   { transform: scale(0.96); }
@@ -139,6 +139,59 @@
   .btn.ghost:hover { background: #eef2f7; }
   .save-block-reason {
     color: var(--block); font-size: 12px; margin-right: 4px;
+  }
+
+  /* Coach mark — anchored below the Save / View-shortlist button */
+  .pageheader .right { position: relative; }
+  .coach-mark {
+    position: absolute;
+    top: calc(100% + 14px);
+    right: 0;
+    width: 280px;
+    background: var(--ink);
+    color: #fff;
+    padding: 14px 16px 14px 16px;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(15,23,42,0.22), 0 2px 6px rgba(15,23,42,0.12);
+    z-index: 50;
+    animation: coachIn .25s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes coachIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* Pointer triangle at top, aligned roughly with the button */
+  .coach-mark::before {
+    content: '';
+    position: absolute;
+    top: -7px; right: 36px;
+    width: 14px; height: 14px;
+    background: var(--ink);
+    transform: rotate(45deg);
+    border-radius: 2px;
+  }
+  .coach-title {
+    font-size: 13px; font-weight: 600; letter-spacing: -0.005em;
+    margin-bottom: 4px; color: #fff;
+  }
+  .coach-body {
+    font-size: 12.5px; color: #cbd5e1; line-height: 1.5;
+  }
+  .coach-body strong { color: #fff; font-weight: 600; }
+  .coach-close {
+    position: absolute; top: 6px; right: 8px;
+    background: transparent; border: 0;
+    color: #94a3b8; font-size: 14px;
+    width: 22px; height: 22px; border-radius: 4px;
+    cursor: pointer; line-height: 1; padding: 0;
+    display: grid; place-items: center;
+  }
+  .coach-close:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+  /* Continuous attention pulse on the View-shortlist button (referenced by .btn.view-shortlist above) */
+  @keyframes viewShortlistPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(14,107,107,0.5), var(--shadow-sm); }
+    50%      { box-shadow: 0 0 0 8px rgba(14,107,107,0), var(--shadow-sm); }
   }
 
   /* ------- Two-pane layout ------- */
@@ -438,6 +491,12 @@
       <button class="btn ghost" id="cancelBtn">Cancel</button>
       <span id="saveBlockReason" class="save-block-reason" style="display:none;">1 hard block must be resolved</span>
       <button id="saveBtn" class="btn primary" disabled>Save criteria</button>
+      <!-- Coach mark — appears after Save transforms the button to 'View shortlist →' -->
+      <div class="coach-mark" id="coachMark" hidden>
+        <button class="coach-close" id="coachClose" aria-label="Dismiss">✕</button>
+        <div class="coach-title">The job is published.</div>
+        <div class="coach-body">Click <strong>View shortlist →</strong> to see the ranked candidates against this criteria.</div>
+      </div>
     </div>
   </div>
 
@@ -964,7 +1023,7 @@
     // 4. Toast — role is now active, shortlist generated against criteria
     showToast(`Criteria saved · v${newV} · role is now active`);
 
-    // 5. After a brief beat, transform Save → View shortlist
+    // 5. After a brief beat, transform Save → View shortlist + show coach mark
     setTimeout(() => {
       isSaved = true;
       btn.disabled = false;
@@ -973,7 +1032,16 @@
       // Hide Cancel — no longer meaningful after save
       const cancel = document.getElementById('cancelBtn');
       if (cancel) cancel.style.display = 'none';
+      // Reveal the coach mark
+      const coach = document.getElementById('coachMark');
+      if (coach) coach.hidden = false;
     }, 700);
+  });
+
+  // Dismiss coach mark
+  document.getElementById('coachClose')?.addEventListener('click', () => {
+    const coach = document.getElementById('coachMark');
+    if (coach) coach.hidden = true;
   });
 
   function summarizeCriteriaForLog() {
