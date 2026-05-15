@@ -561,6 +561,227 @@
       ]
     },
 
+    47: {
+      rank: 4, tier: 'Tier B — Statistically indistinguishable', tierClass: 'B', revealName: 'Daniel Patel',
+      snapshot: { years: 4, mostRecent: 'Backend Engineer @ Stripe (2 yrs)', domain: { strength: 'Strong', detail: 'Stripe dispute-handling pipeline' }, quantCount: 4 },
+      mustHaves: [
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Stripe role: <strong>"dispute-handling pipeline · 80M txns/day"</strong>' },
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
+          evidence: 'Direct — <strong>Stripe Disputes API and chargeback flow</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
+          none: 'No direct ML signals — work is in rules-engine / state-machine systems.' },
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Stripe role: <strong>"team of 5; led dispute-service rewrite"</strong>' },
+      ],
+      resume: [
+        { title: 'Backend Engineer · Stripe', meta: 'Mar 2023 — Present · 2 yrs · San Francisco, CA',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Owned <strong>dispute-handling pipeline · ~80M txns/day</strong> with retries and state-machine guarantees.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Implemented <strong>Stripe Disputes API v2</strong> — chargeback resolution flow used by 12k+ merchants.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Led <strong>team of 5</strong> through dispute-service rewrite (6 months).' },
+            { quant: true, text: 'Cut dispute auto-resolution latency from <strong>9hr → 22min</strong>.' },
+          ]},
+        { title: 'Backend Engineer · Acuity Scheduling', meta: 'Jul 2021 — Feb 2023 · 1 yr 7 mos',
+          bullets: [
+            { match: 'distsys', text: 'Built distributed scheduling backend for SMB appointment-booking SaaS.' },
+            { quant: true, text: 'Reduced job-queue tail latency from <strong>p99 4s → 600ms</strong>.' },
+          ]},
+      ]
+    },
+
+    33: {
+      rank: 5, tier: 'Tier B — Statistically indistinguishable', tierClass: 'B', revealName: 'Lena Kowalski',
+      snapshot: { years: 4, mostRecent: 'Backend Engineer @ Adyen (2 yrs)', domain: { strength: 'Strong', detail: 'Adyen risk-scoring pipeline' }, quantCount: 4 },
+      mustHaves: [
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Adyen role: <strong>"risk-scoring pipeline · 85M txns/day"</strong>' },
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
+          evidence: 'Direct — <strong>Adyen risk + prior Worldpay role</strong>' },
+        { status: 'ok', type: 'preferred', weight: 3, name: 'AI / ML experience', anchor: 'ml',
+          evidence: 'Worked on <strong>risk-scoring ML pipeline integration</strong> at Adyen.' },
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Adyen role: <strong>"team of 4; mentored 1 junior"</strong>' },
+      ],
+      resume: [
+        { title: 'Backend Engineer · Adyen', meta: 'Feb 2023 — Present · 2 yrs · Amsterdam',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Built <strong>risk-scoring pipeline · ~85M txns/day</strong> with online inference and feature cache.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Integrated risk service with <strong>card-acquiring rails</strong> across 4 issuer networks.' },
+            { match: 'ml', tag: 'AI/ML',
+              text: 'Owned the <strong>feature-store pipeline</strong> serving real-time risk-model features.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Led <strong>team of 4</strong> on the risk-pipeline rewrite; mentored 1 junior engineer.' },
+          ]},
+        { title: 'Backend Engineer · Worldpay', meta: 'May 2021 — Jan 2023 · 1 yr 8 mos · London',
+          bullets: [
+            { match: 'payments', text: 'Worked on <strong>card-authorization gateway</strong> for European merchants.' },
+            { quant: true, text: 'Migrated batch settlement jobs to streaming — cut settlement lag <strong>8hr → 20min</strong>.' },
+          ]},
+      ]
+    },
+
+    55: {
+      rank: 6, tier: 'Tier B — Statistically indistinguishable', tierClass: 'B', revealName: 'Jordan Reeves',
+      snapshot: { years: 4, mostRecent: 'Backend Engineer @ Shopify (2 yrs)', domain: { strength: 'Strong', detail: 'Shopify billing-events pipeline' }, quantCount: 4 },
+      mustHaves: [
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Shopify role: <strong>"billing-events pipeline · 75M txns/day"</strong>' },
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
+          evidence: 'Direct — <strong>Shopify Payments + billing-engine ownership</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
+          none: 'No direct ML signals — billing/eventing systems work.' },
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Shopify role: <strong>"team of 5; tech-lead for billing service"</strong>' },
+      ],
+      resume: [
+        { title: 'Backend Engineer · Shopify', meta: 'Apr 2023 — Present · 2 yrs · Remote',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Owned <strong>billing-events pipeline · ~75M txns/day</strong> on Kafka with at-least-once delivery.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Built <strong>Shopify Payments billing engine</strong> — subscription + usage-based plans.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Tech-lead for <strong>team of 5</strong> on billing-events service.' },
+            { quant: true, text: 'Cut webhook-delivery failure rate from <strong>0.42% → 0.04%</strong>.' },
+          ]},
+        { title: 'Backend Engineer · Faire', meta: 'Aug 2021 — Mar 2023 · 1 yr 8 mos · SF',
+          bullets: [
+            { match: 'payments', text: 'Built <strong>order-payments reconciliation</strong> for B2B wholesale marketplace.' },
+            { quant: true, text: 'Owned a service handling <strong>~$50M/month GMV</strong>.' },
+          ]},
+      ]
+    },
+
+    67: {
+      rank: 7, tier: 'Tier B — Statistically indistinguishable', tierClass: 'B', revealName: 'Sam Okonkwo',
+      snapshot: { years: 3, mostRecent: 'Senior Backend Engineer @ Affirm (2 yrs)', domain: { strength: 'Strong', detail: 'Affirm BNPL underwriting' }, quantCount: 4 },
+      mustHaves: [
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Affirm role: <strong>"underwriting pipeline · 70M txns/day"</strong>' },
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
+          evidence: 'Direct — <strong>Affirm BNPL underwriting + loan-servicing</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
+          none: 'Rules-engine work, not ML — could be cross-trained but no current evidence.' },
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Affirm role: <strong>"team of 4"</strong> — less senior-leadership-signal than peers' },
+      ],
+      resume: [
+        { title: 'Senior Backend Engineer · Affirm', meta: 'May 2023 — Present · 2 yrs · NYC',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Owned <strong>underwriting decisioning pipeline · ~70M txns/day</strong> with sub-200ms p99.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Built <strong>loan-servicing state machine</strong> for BNPL repayment cycles.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Worked closely with <strong>team of 4</strong> on underwriting platform.' },
+            { quant: true, text: 'Cut decision latency tail by <strong>~40%</strong> via cache warming.' },
+          ]},
+        { title: 'Backend Engineer · Plaid', meta: 'Jun 2022 — Apr 2023 · 11 mos',
+          bullets: [
+            { match: 'payments', text: 'Worked on <strong>ACH-rail bank linking</strong> for early-career rotation.' },
+          ]},
+      ]
+    },
+
+    102: {
+      rank: 8, tier: 'Tier B — Statistically indistinguishable', tierClass: 'B', revealName: 'Mia Lindqvist',
+      snapshot: { years: 4, mostRecent: 'Backend Engineer @ Klarna (3 yrs)', domain: { strength: 'Strong', detail: 'Klarna settlement pipeline' }, quantCount: 4 },
+      mustHaves: [
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Klarna role: <strong>"settlement pipeline · 80M txns/day"</strong>' },
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
+          evidence: 'Direct — <strong>Klarna settlement + prior payments role</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
+          none: 'No direct ML evidence — work is in financial settlement and reconciliation.' },
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Klarna role: <strong>"team of 5; coordinates with EU treasury team"</strong>' },
+      ],
+      resume: [
+        { title: 'Backend Engineer · Klarna', meta: 'Mar 2022 — Present · 3 yrs · Stockholm',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Owned <strong>settlement pipeline · ~80M txns/day</strong> across 4 European banking partners.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Built <strong>multi-currency settlement engine</strong> handling EUR / SEK / NOK / GBP rails.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Tech-lead for <strong>team of 5</strong>; partnership with EU treasury team.' },
+            { quant: true, text: 'Cut end-of-day settlement window from <strong>2hr → 14min</strong>.' },
+          ]},
+        { title: 'Backend Engineer · iZettle', meta: 'Aug 2021 — Feb 2022 · 7 mos',
+          bullets: [
+            { match: 'payments', text: 'Worked on <strong>POS-rail payment routing</strong> for European SMB merchants.' },
+          ]},
+      ]
+    },
+
+    9: {
+      rank: 9, tier: 'Tier C — Mixed signals', tierClass: 'C', revealName: 'Rohan Mehta',
+      snapshot: { years: 4, mostRecent: 'SWE II @ Google (3 yrs)', domain: { strength: 'Weak', detail: 'no fintech / payments experience' }, quantCount: 5 },
+      mustHaves: [
+        { status: 'ok', type: 'gate', name: 'Distributed systems experience', anchor: 'distsys',
+          evidence: 'Found in Google role: <strong>"Spanner storage tier + F1 query layer"</strong> — exceptionally strong' },
+        { status: 'miss', type: 'preferred', weight: 4, name: 'Payments domain',
+          none: 'No payments / fintech evidence on resume. Google work is in storage and ads-infra.' },
+        { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
+          none: 'No direct ML work — adjacent to ranking systems but not ML-engineering.' },
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Found in Google role: <strong>"tech lead for sub-team of 3"</strong>' },
+      ],
+      resume: [
+        { title: 'Software Engineer II · Google', meta: 'Jul 2022 — Present · 3 yrs · Mountain View, CA',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Worked on <strong>Spanner storage tier</strong> — owned tablet-balancing subsystem across 12 zones.' },
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Contributed to <strong>F1 query layer</strong> — added pushdown optimization saving <strong>~8% CPU fleet-wide</strong>.' },
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Tech-lead for <strong>sub-team of 3</strong> on storage-tier reliability.' },
+            { quant: true, text: 'Reduced tail latency p99.9 from <strong>180ms → 95ms</strong> on hot-shard rebalancing.' },
+          ]},
+        { title: 'Software Engineering Intern · Google', meta: 'Summer 2021 · 3 mos',
+          bullets: [
+            { text: 'Worked on Ads infra observability tooling.' },
+          ]},
+      ]
+    },
+
+    88: {
+      rank: 10, tier: 'Tier C — Mixed signals', tierClass: 'C', revealName: 'Eva Reyes',
+      snapshot: { years: 7, mostRecent: 'Senior Engineer @ Coinbase (4 yrs)', domain: { strength: 'Strong', detail: 'crypto-payments, but light recent IC ownership' }, quantCount: 3 },
+      mustHaves: [
+        { status: 'miss', type: 'gate', name: 'Distributed systems experience',
+          none: 'Older IC work shows distributed-systems depth, but the last 2 years have been management-track without recent ownership.' },
+        { status: 'ok', type: 'preferred', weight: 4, name: 'Payments domain', anchor: 'payments',
+          evidence: 'Deep — <strong>4 years at Coinbase across multiple crypto-payments products</strong>' },
+        { status: 'miss', type: 'preferred', weight: 3, name: 'AI / ML experience',
+          none: 'No ML evidence on resume.' },
+        { status: 'ok', type: 'preferred', weight: 3, name: 'Team leadership', anchor: 'leadership',
+          evidence: 'Recent role is <strong>people-management track</strong>; mentored 3 engineers through promotion.' },
+      ],
+      resume: [
+        { title: 'Senior Engineer · Coinbase', meta: 'Mar 2021 — Present · 4 yrs · Remote',
+          bullets: [
+            { match: 'leadership', tag: 'Team leadership',
+              text: 'Transitioned to <strong>people-management track</strong> 2 years ago; mentored 3 engineers through promotion.' },
+            { match: 'payments', tag: 'Payments domain',
+              text: 'Product lead for <strong>fiat off-ramp UX</strong>; coordinated with backend pods on rails integration.' },
+            { text: 'Limited recent hands-on IC contribution — strategy / coordination focus.' },
+          ]},
+        { title: 'Backend Engineer · Stripe', meta: 'Jun 2018 — Feb 2021 · 2 yrs 8 mos',
+          bullets: [
+            { match: 'distsys', quant: true, tag: 'Distributed systems',
+              text: 'Owned <strong>payments-events ingestion pipeline</strong> — handled ~40M txns/day at the time.' },
+            { match: 'payments', text: 'Built <strong>card-rail integration</strong> for Stripe Issuing pilot.' },
+          ]},
+      ]
+    },
+
     12: {
       rank: 15, tier: 'Below the line', tierClass: 'B', revealName: 'Maya Chen',
       snapshot: {
