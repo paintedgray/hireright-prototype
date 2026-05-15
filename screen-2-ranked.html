@@ -434,6 +434,70 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
 
+  /* Move-forward confirmation modal */
+  .mv-backdrop {
+    position: fixed; inset: 0; z-index: 60;
+    background: rgba(15,23,42,0.55);
+    display: none; align-items: center; justify-content: center; padding: 24px;
+  }
+  .mv-backdrop.show { display: flex; }
+  .mv-modal {
+    width: min(540px, 100%); background: var(--surface); border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(15,23,42,0.18), 0 4px 16px rgba(15,23,42,0.08);
+    display: flex; flex-direction: column; overflow: hidden;
+    animation: mvIn 0.22s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes mvIn {
+    from { transform: translateY(8px) scale(0.98); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .mv-head {
+    padding: 16px 22px 14px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mv-head h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+  .mv-close {
+    margin-left: auto; background: transparent; border: 0;
+    color: var(--ink-3); font-size: 18px; padding: 4px 8px; border-radius: 6px; cursor: pointer;
+  }
+  .mv-close:hover { background: var(--surface-2); color: var(--ink); }
+  .mv-body { padding: 18px 22px; }
+  .mv-stat {
+    background: var(--brand-soft); border: 1px solid #bfe1e1;
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .mv-stat-num {
+    font-size: 32px; font-weight: 700; color: var(--brand-ink);
+    line-height: 1; font-variant-numeric: tabular-nums;
+  }
+  .mv-stat-lbl { color: var(--brand-ink); font-size: 13px; }
+  .mv-list {
+    list-style: none; margin: 0; padding: 0; display: grid; gap: 8px;
+  }
+  .mv-list li {
+    display: grid; grid-template-columns: 24px 1fr; gap: 10px;
+    font-size: 13px; color: var(--ink-2); line-height: 1.5;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+  }
+  .mv-list li:last-child { border-bottom: none; }
+  .mv-list li strong { color: var(--ink); font-weight: 600; }
+  .mv-ico { font-size: 14px; }
+  .mv-note {
+    margin-top: 12px; padding: 10px 12px;
+    background: var(--surface-2); border: 1px dashed var(--border-strong);
+    border-radius: 8px;
+    color: var(--ink-3); font-size: 12px; line-height: 1.5;
+  }
+  .mv-foot {
+    padding: 12px 22px; border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    display: flex; gap: 8px; justify-content: flex-end;
+  }
+  .btn.primary.done {
+    background: var(--ok); border-color: var(--ok); color: white;
+  }
+
   /* Anonymized name styling */
   .name .anon { color: var(--ink-3); font-weight: 500; font-size: 12px; }
 </style>
@@ -470,7 +534,7 @@
       <div class="right">
         <a href="#" class="reset-link" id="resetLink" title="Clear demo state">↻ Reset demo</a>
         <a href="screen-5-audit.html" class="btn ghost">📋 Decision log</a>
-        <button class="btn primary">Move shortlist forward</button>
+        <button class="btn primary" id="moveForwardBtn">Move shortlist forward</button>
       </div>
     </div>
 
@@ -558,6 +622,35 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Move-forward confirmation modal -->
+<div class="mv-backdrop" id="mvBackdrop">
+  <div class="mv-modal" role="dialog" aria-modal="true" aria-labelledby="mvTitle">
+    <header class="mv-head">
+      <h2 id="mvTitle">Move shortlist to HM screen?</h2>
+      <button class="mv-close" id="mvClose" aria-label="Close">✕</button>
+    </header>
+    <div class="mv-body">
+      <div class="mv-stat">
+        <div class="mv-stat-num" id="mvCount">10</div>
+        <div class="mv-stat-lbl">candidates moving forward</div>
+      </div>
+      <ul class="mv-list">
+        <li><span class="mv-ico">✉️</span> Hiring manager <strong>Sarah Chen</strong> is notified with each candidate's override trail</li>
+        <li><span class="mv-ico">📋</span> Audit log records the batch hand-off with timestamp + recruiter attribution</li>
+        <li><span class="mv-ico">📅</span> Phone-screen scheduling links sent to candidates within 24 hours</li>
+        <li><span class="mv-ico">🔒</span> Role state transitions <strong>Active → HM screen</strong> · criteria becomes immutable for this cohort</li>
+      </ul>
+      <div class="mv-note">
+        Once moved forward, criteria can still be edited for future candidate batches — but this cohort's rankings are locked.
+      </div>
+    </div>
+    <footer class="mv-foot">
+      <button class="btn" id="mvCancel">Cancel</button>
+      <button class="btn primary" id="mvConfirm">Move <span id="mvConfirmCount">10</span> candidates forward</button>
+    </footer>
+  </div>
+</div>
 
 <script>
   // -------- Sample data --------
@@ -904,6 +997,54 @@
     searchInput.value = '';
     applySearch();
     searchInput.focus();
+  });
+
+  // -------- Move shortlist forward --------
+  function currentShortlistCount() {
+    // Visible top-tier candidates (Tier A/B/C, excluding dismissed)
+    return [...tierA, ...tierB, ...tierC].filter(c => !dismissed.has(c.id)).length;
+  }
+  const mvBackdrop = document.getElementById('mvBackdrop');
+  const mvBtn = document.getElementById('moveForwardBtn');
+  function openMv() {
+    if (mvBtn.classList.contains('done')) return; // already submitted this session
+    const n = currentShortlistCount();
+    document.getElementById('mvCount').textContent = n;
+    document.getElementById('mvConfirmCount').textContent = n;
+    mvBackdrop.classList.add('show');
+  }
+  function closeMv() { mvBackdrop.classList.remove('show'); }
+  mvBtn.addEventListener('click', openMv);
+  document.getElementById('mvCancel').addEventListener('click', closeMv);
+  document.getElementById('mvClose').addEventListener('click', closeMv);
+  mvBackdrop.addEventListener('click', e => { if (e.target === e.currentTarget) closeMv(); });
+
+  document.getElementById('mvConfirm').addEventListener('click', () => {
+    const n = currentShortlistCount();
+
+    // Write audit log entry
+    const s = loadState();
+    s.logEntries = s.logEntries || [];
+    s.logEntries.push({
+      ts: Date.now(),
+      recruiter: 'Sara Park',
+      kind: 'save',
+      label: 'Moved shortlist forward',
+      target: `${n} candidates → HM screen`,
+      targetType: 'cohort',
+      change: 'Active → HM screen',
+      reasonLabel: 'Shortlist committed; cohort rankings locked',
+      notes: `Shortlist of ${n} candidates handed off to hiring-manager screen. ${state.overrides.length} override${state.overrides.length === 1 ? '' : 's'} attached.`,
+    });
+    saveState(s);
+
+    closeMv();
+    toast(`${n} candidates moved to HM screen · Sarah Chen notified · audit log updated`);
+    mvBtn.classList.add('done');
+    mvBtn.textContent = '✓ Shortlist sent to HM';
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && mvBackdrop.classList.contains('show')) closeMv();
   });
 
   // -------- Reset demo state --------
