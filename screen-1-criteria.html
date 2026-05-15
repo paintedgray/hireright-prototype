@@ -148,6 +148,28 @@
     align-items: stretch;
     min-height: 0;
   }
+
+  /* Page-level orientation banner (spans both panes) */
+  .page-intro {
+    grid-column: 1 / -1;
+    padding: 12px 28px;
+    background: var(--brand-soft);
+    border-bottom: 1px solid #bfe1e1;
+    color: var(--brand-ink);
+    font-size: 13px;
+    line-height: 1.55;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .page-intro-icon {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: var(--brand); color: #fff;
+    display: grid; place-items: center;
+    font-size: 11.5px; font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .page-intro-text { flex: 1; }
+  .page-intro-text strong { color: var(--brand-ink); font-weight: 600; }
+  .page-intro-text em { font-style: italic; color: var(--brand-ink); }
   .pane-left {
     padding: 24px 28px 64px;
     overflow-y: auto;
@@ -427,6 +449,14 @@
 
   <!-- Two panes -->
   <main class="panes">
+
+    <!-- Page-level orientation banner -->
+    <div class="page-intro">
+      <div class="page-intro-icon">ⓘ</div>
+      <div class="page-intro-text">
+        Define gates and weighted preferred criteria for the role. The right panel runs a live bias check — three tiers (soft flag, soft block, hard block) fire <em>before</em> save. Resolve flags to unlock Save; click <strong>Trigger hard block</strong> to see the enforcement example.
+      </div>
+    </div>
 
     <!-- LEFT: criteria definition -->
     <section class="pane-left">
