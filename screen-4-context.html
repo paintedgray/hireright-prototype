@@ -169,6 +169,29 @@
     padding: 18px 22px 24px;
   }
 
+  /* Page-level orientation banner */
+  .page-intro {
+    padding: 12px 14px;
+    background: var(--brand-soft);
+    border: 1px solid #bfe1e1;
+    border-radius: var(--radius);
+    color: var(--brand-ink);
+    font-size: 13px;
+    line-height: 1.55;
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .page-intro-icon {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: var(--brand); color: #fff;
+    display: grid; place-items: center;
+    font-size: 11.5px; font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .page-intro-text { flex: 1; }
+  .page-intro-text strong { color: var(--brand-ink); font-weight: 600; }
+  .page-intro-text em { font-style: italic; color: var(--brand-ink); }
+
   /* Section */
   .section { margin-bottom: 22px; }
   .section-head {
@@ -940,9 +963,19 @@
     `;
   }
 
+  function renderBanner() {
+    return `
+      <div class="page-intro">
+        <div class="page-intro-icon">ⓘ</div>
+        <div class="page-intro-text">
+          Evidence-based context for one candidate — <em>no scores, just what the resume says</em>. Click ✓ criteria rows to jump to matching resume bullets. Use the actions at the bottom to override the model on this candidate.
+        </div>
+      </div>
+    `;
+  }
   function renderBody(c) {
     document.getElementById('dbody').innerHTML =
-      renderSnapshot(c) + renderMustHaves(c) + renderResume(c);
+      renderBanner() + renderSnapshot(c) + renderMustHaves(c) + renderResume(c);
   }
 
   function renderActions(c) {
